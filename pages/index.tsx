@@ -562,7 +562,7 @@ const EarlyAccessForm = ({
               Acceso Temprano Gratuito
             </h3>
             <p className="text-gray-600">
-              Beta privada disponible en <strong>Marzo 2024</strong>
+              Beta privada disponible en <strong>Enero 2025</strong>
             </p>
           </div>
 
@@ -679,7 +679,7 @@ const FAQSection = ({ faqOpen, toggleFaq }: { faqOpen: number | null, toggleFaq:
   const faqs = [
     {
       question: "¿Cuándo estará disponible ReFut?",
-      answer: "ReFut estará disponible en su versión beta privada en Marzo 2024. Los usuarios registrados en acceso temprano serán los primeros en probar la aplicación."
+      answer: "ReFut estará disponible en su versión beta privada en Enero 2025. Los usuarios registrados en acceso temprano serán los primeros en probar la aplicación."
     },
     {
       question: "¿Es gratis usar ReFut?",
@@ -687,7 +687,7 @@ const FAQSection = ({ faqOpen, toggleFaq }: { faqOpen: number | null, toggleFaq:
     },
     {
       question: "¿En qué ciudades estará disponible inicialmente?",
-      answer: "ReFut comenzará en Guadalajara y Zapopan, Jalisco, con planes de expansión a otras ciudades mexicanas según la demanda y crecimiento de la comunidad."
+      answer: "ReFut comenzará en la Zona Metropolitana de Guadalajara, Jalisco, con planes de expansión a otras ciudades mexicanas según la demanda y crecimiento de la comunidad."
     },
     {
       question: "¿Cómo funciona el sistema de reservas?",
@@ -755,7 +755,7 @@ const ContactSection = () => {
 
         <div className="flex justify-center space-x-8">
           <a 
-            href="https://wa.me/5213312345678" 
+            href="https://wa.me/5213310475942" 
             target="_blank" 
             rel="noopener noreferrer"
             className="bg-green-500 text-white p-4 rounded-full hover:bg-green-600 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1"
@@ -790,10 +790,10 @@ const ContactSection = () => {
           <h3 className="text-xl font-semibold text-gray-900 mb-2">¿Tienes preguntas?</h3>
           <p className="text-gray-600 mb-4">Contáctanos directamente</p>
           <a 
-            href="mailto:hola@refut.mx" 
+            href="mailto:refut@gmail.com" 
             className="text-green-600 font-semibold hover:text-green-700"
           >
-            hola@refut.mx
+            refut@gmail.com
           </a>
         </div>
       </div>
@@ -855,7 +855,7 @@ const Footer = () => {
         
         <div className="border-t border-gray-800 mt-8 pt-8 text-center">
           <p className="text-gray-400">
-            © 2024 ReFut. Todos los derechos reservados. Hecho con ❤️ en México.
+            © 2025 ReFut. Todos los derechos reservados. Hecho con ❤️ en México.
           </p>
         </div>
       </div>
