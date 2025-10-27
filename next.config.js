@@ -1,11 +1,19 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'export',
-  trailingSlash: true,
+  // Remover configuración de export estático para Vercel
+  // output: 'export',
+  // trailingSlash: true,
+  // images: {
+  //   unoptimized: true
+  // },
+  // assetPrefix: process.env.NODE_ENV === 'production' ? '' : '',
+  
+  // Configuración optimizada para Vercel
+  reactStrictMode: true,
+  swcMinify: true,
   images: {
-    unoptimized: true
+    domains: [],
   },
-  assetPrefix: process.env.NODE_ENV === 'production' ? '' : '',
 }
 
 module.exports = nextConfig
