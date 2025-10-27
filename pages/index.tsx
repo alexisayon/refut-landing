@@ -789,13 +789,13 @@ const EarlyAccessForm = ({
     <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-green-50 to-blue-50">
       <div className="max-w-4xl mx-auto text-center">
         <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-          Únete a la Beta de ReFut
+          Completa tu Registro para la Beta
         </h2>
         <p className="text-xl text-gray-600 mb-12">
-          Sé parte de los primeros en construir la comunidad del fútbol amateur en México
+          Llena el formulario para unirte a la comunidad que está construyendo el futuro del fútbol amateur
         </p>
 
-        <div className="bg-white rounded-2xl shadow-xl p-8 max-w-2xl mx-auto">
+        <div className="bg-white rounded-2xl shadow-xl p-8 max-w-4xl mx-auto">
           <div className="text-center mb-8">
             <h3 className="text-2xl font-bold text-gray-900 mb-2">
               Acceso Beta Gratuito
@@ -877,16 +877,16 @@ const EarlyAccessForm = ({
                 Selecciona los problemas que más enfrentas al jugar fútbol amateur:
               </p>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
                 {problemasPrincipales.map((problema: string, index: number) => (
-                  <label key={index} className="flex items-start">
+                  <label key={index} className="flex items-start p-3 rounded-lg hover:bg-gray-100 transition-colors">
                     <input
                       type="checkbox"
                       checked={selectedProblems.includes(problema)}
                       onChange={() => toggleProblemChecklist(problema)}
-                      className="mt-1 h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
+                      className="mt-1 h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded flex-shrink-0"
                     />
-                    <span className="ml-3 text-sm text-gray-700">{problema}</span>
+                    <span className="ml-3 text-sm text-gray-700 leading-relaxed">{problema}</span>
                   </label>
                 ))}
               </div>
@@ -996,9 +996,9 @@ const EarlyAccessForm = ({
                   Enviando...
                 </span>
               ) : formularioEnviado ? (
-                '✅ ¡Te Uniste a la Beta!'
+                '✅ ¡Registro Completado!'
               ) : (
-                '🚀 Unirme a la Beta'
+                '🚀 Finalizar Registro'
               )}
                       </button>
           </form>
