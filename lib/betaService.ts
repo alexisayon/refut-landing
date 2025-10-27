@@ -129,6 +129,7 @@ export class MigrationService {
             nivelJuego: user.nivelJuego,
             problemasPrincipales: user.problemasPrincipales || [],
             otrasProblematicas: user.otrasProblematicas || '',
+            mayorReto: user.mayorReto || '',
             interesEarlyAccess: user.interesEarlyAccess || false,
             selectedProblems: user.selectedProblems || [],
             additionalComment: user.additionalComment || ''

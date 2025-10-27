@@ -28,6 +28,7 @@ export default function TestFirebase() {
         nivelJuego: 'Intermedio',
         problemasPrincipales: ['Falta de organización'],
         otrasProblematicas: 'Prueba de conectividad',
+        mayorReto: 'Encontrar jugadores para partidos regulares',
         interesEarlyAccess: true
       }
       
