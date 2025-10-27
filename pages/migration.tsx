@@ -8,12 +8,20 @@ export default function MigrationPage() {
   const { stats, loading, loadStats } = useFirebaseStats()
 
   useEffect(() => {
-    // Contar usuarios en localStorage
-    const localData = JSON.parse(localStorage.getItem('refut_early_access_list') || '[]')
-    setLocalStorageCount(localData.length)
+    // Solo ejecutar en el cliente
+    if (typeof window !== 'undefined') {
+      // Contar usuarios en localStorage
+      try {
+        const localData = JSON.parse(localStorage.getItem('refut_early_access_list') || '[]')
+        setLocalStorageCount(localData.length)
+      } catch (error) {
+        console.error('Error accediendo a localStorage:', error)
+        setLocalStorageCount(0)
+      }
 
-    // Cargar estadísticas de Firebase
-    loadStats()
+      // Cargar estadísticas de Firebase
+      loadStats()
+    }
   }, [loadStats])
 
   const handleMigrationComplete = (migrationStats: { migrated: number, errors: number }) => {

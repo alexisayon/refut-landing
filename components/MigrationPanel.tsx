@@ -29,8 +29,13 @@ export const MigrationPanel = ({ onMigrationComplete }: MigrationPanelProps) => 
 
   const getLocalStorageData = () => {
     if (typeof window === 'undefined') return 0
-    const data = JSON.parse(localStorage.getItem('refut_early_access_list') || '[]')
-    return data.length
+    try {
+      const data = JSON.parse(localStorage.getItem('refut_early_access_list') || '[]')
+      return data.length
+    } catch (error) {
+      console.error('Error accediendo a localStorage:', error)
+      return 0
+    }
   }
 
   return (
@@ -96,10 +101,18 @@ export const useFirebaseStats = () => {
       setStats(firebaseStats)
     } catch (error) {
       console.error('Error cargando estadísticas:', error)
-      // Fallback a localStorage si Firebase falla
+      // Fallback a localStorage si Firebase falla (solo en cliente)
       if (typeof window !== 'undefined') {
-        const localData = JSON.parse(localStorage.getItem('refut_early_access_list') || '[]')
-        setStats({ totalUsers: localData.length })
+        try {
+          const localData = JSON.parse(localStorage.getItem('refut_early_access_list') || '[]')
+          setStats({ totalUsers: localData.length })
+        } catch (localError) {
+          console.error('Error accediendo a localStorage:', localError)
+          setStats({ totalUsers: 0 })
+        }
+      } else {
+        // Durante el build del servidor, usar valor por defecto
+        setStats({ totalUsers: 0 })
       }
     } finally {
       setLoading(false)
