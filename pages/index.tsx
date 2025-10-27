@@ -1,11 +1,37 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useState, useEffect } from 'react'
 import type { FormData } from '../types'
 import Logo from '../components/Logo'
 import { PrivacyNotice } from '../components/PrivacyNotice'
 import { FormValidator, AntiSpam } from '../lib/formValidator'
+import { BetaService } from '../lib/betaService'
+import { 
+  FaMapMarkedAlt, 
+  FaUsers, 
+  FaChartLine, 
+  FaBell, 
+  FaStar, 
+  FaTrophy,
+  FaLightbulb,
+  FaCog,
+  FaBolt,
+  FaComments,
+  FaDollarSign,
+  FaGift,
+  FaUser,
+  FaBuilding,
+  FaCheckCircle,
+  FaWhatsapp,
+  FaInstagram,
+  FaFacebook,
+  FaTiktok,
+  FaEnvelope,
+  FaChevronDown,
+  FaSpinner
+} from 'react-icons/fa'
 
 const Home: NextPage = () => {
   const [formData, setFormData] = useState<FormData>({
@@ -15,6 +41,7 @@ const Home: NextPage = () => {
     nivelJuego: '',
     problemasPrincipales: [],
     otrasProblematicas: '',
+    mayorReto: '',
     interesEarlyAccess: false
   })
   const [mostrarFormulario, setMostrarFormulario] = useState(false)
@@ -30,6 +57,10 @@ const Home: NextPage = () => {
   const [formErrors, setFormErrors] = useState<Record<string, string>>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [honeypot, setHoneypot] = useState('')
+  const [formProgress, setFormProgress] = useState(0)
+  const [fieldAnimations, setFieldAnimations] = useState<Record<string, boolean>>({})
+  const [achievements, setAchievements] = useState<string[]>([])
+  const [showAchievement, setShowAchievement] = useState<string | null>(null)
 
   const problemasPrincipales = [
     'Dificultad para encontrar canchas disponibles',
@@ -39,7 +70,15 @@ const Home: NextPage = () => {
     'Problemas para dividir costos',
     'Falta de árbitros capacitados',
     'Canchas en mal estado',
-    'Horarios limitados'
+    'Horarios limitados',
+    'Falta de organización en equipos',
+    'Dificultad para encontrar jugadores',
+    'Problemas con el transporte a las canchas',
+    'Falta de información sobre partidos cercanos',
+    'No hay seguimiento de estadísticas',
+    'Problemas con el clima y cancelaciones',
+    'Falta de torneos locales',
+    'Dificultad para reservar horarios específicos'
   ]
 
   const problemasOrganizadores = [
@@ -50,7 +89,15 @@ const Home: NextPage = () => {
     'Cancelaciones de último momento',
     'Dificultad para encontrar árbitros',
     'Gestión de equipos y ligas',
-    'Falta de datos sobre uso'
+    'Falta de datos sobre uso',
+    'Problemas con la promoción de eventos',
+    'Dificultad para coordinar horarios',
+    'Falta de herramientas de comunicación',
+    'Problemas con el mantenimiento de canchas',
+    'Dificultad para organizar torneos',
+    'Falta de sistema de calificaciones',
+    'Problemas con la gestión de equipos',
+    'Dificultad para atraer nuevos jugadores'
   ]
 
   // Función para obtener el número de usuarios registrados
@@ -66,6 +113,69 @@ const Home: NextPage = () => {
   useEffect(() => {
     setUsuariosRegistrados(obtenerUsuariosRegistrados())
   }, [])
+
+  // Sincronizar selectedProblems con formData.problemasPrincipales
+  useEffect(() => {
+    setSelectedProblems(formData.problemasPrincipales)
+  }, [formData.problemasPrincipales])
+
+  // Calcular progreso del formulario y activar logros
+  useEffect(() => {
+    let progress = 0
+    const totalFields = 6 // nombre, email, ubicacion, nivelJuego, mayorReto, problemasPrincipales
+    
+    if (formData.nombre.trim()) progress += 1
+    if (formData.email.trim()) progress += 1
+    if (formData.ubicacion) progress += 1
+    if (formData.nivelJuego) progress += 1
+    if (formData.mayorReto.trim()) progress += 1
+    if (formData.problemasPrincipales.length > 0) progress += 1
+    
+    setFormProgress((progress / totalFields) * 100)
+
+    // Activar logros
+    if (progress >= 1 && !achievements.includes('first_field')) {
+      showAchievementToast('first_field')
+    }
+    if (progress >= 3 && !achievements.includes('half_form')) {
+      showAchievementToast('half_form')
+    }
+    if (formData.problemasPrincipales.length > 0 && !achievements.includes('problems_selected')) {
+      showAchievementToast('problems_selected')
+    }
+    if (formData.mayorReto.trim().length > 50 && !achievements.includes('detailed_response')) {
+      showAchievementToast('detailed_response')
+    }
+    if (progress === totalFields && !achievements.includes('form_complete')) {
+      showAchievementToast('form_complete')
+    }
+  }, [formData, achievements])
+
+  // Función para animar campos (deshabilitada para experiencia más limpia)
+  const animateField = (fieldName: string) => {
+    // Animación removida para una experiencia más limpia
+  }
+
+  // Función para mostrar logros
+  const showAchievementToast = (achievement: string) => {
+    if (!achievements.includes(achievement)) {
+      setAchievements(prev => [...prev, achievement])
+      setShowAchievement(achievement)
+      setTimeout(() => {
+        setShowAchievement(null)
+      }, 3000)
+    }
+  }
+
+  // Definir logros
+  const achievementDefinitions = {
+    'first_field': { title: '🎯 Primer Paso', description: '¡Completaste tu primer campo!' },
+    'half_form': { title: '💪 A Mitad de Camino', description: '¡Ya completaste la mitad del formulario!' },
+    'problems_selected': { title: '🔍 Analista', description: '¡Seleccionaste tus problemas principales!' },
+    'detailed_response': { title: '📝 Detallista', description: '¡Describiste tu mayor reto con detalle!' },
+    'form_complete': { title: '🏆 Completista', description: '¡Formulario completado al 100%!' },
+    'early_adopter': { title: '🚀 Early Adopter', description: '¡Eres uno de los primeros en unirte!' }
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -101,42 +211,65 @@ const Home: NextPage = () => {
         return
       }
       
-      // 5. Guardar datos en localStorage (temporal)
-    const formDataKey = `refut_early_access_${Date.now()}`
-    const formDataWithTimestamp = {
-        ...sanitizedData,
-      id: formDataKey,
-        source: 'landing_page',
-        selectedProblems: selectedProblems,
-        additionalComment: additionalComment,
-        privacyAccepted: true,
-        termsAccepted: true,
-        userAgent: typeof window !== 'undefined' ? window.navigator.userAgent : '',
-        timestamp: new Date().toISOString()
-    }
-    
-    // Guardar registro individual
-      if (typeof window !== 'undefined') {
-    localStorage.setItem(formDataKey, JSON.stringify(formDataWithTimestamp))
-    
-    // Guardar en lista de registros
-    const existingData = JSON.parse(localStorage.getItem('refut_early_access_list') || '[]')
-    existingData.push(formDataWithTimestamp)
-    localStorage.setItem('refut_early_access_list', JSON.stringify(existingData))
-    
-    console.log('📊 Datos guardados:', {
-      individual: formDataWithTimestamp,
-          totalRegistros: existingData.length
+      // 5. Enviar datos a Firebase
+      try {
+        const firebaseId = await BetaService.registerUser({
+          nombre: (sanitizedData as any).nombre,
+          email: (sanitizedData as any).email,
+          ubicacion: (sanitizedData as any).ubicacion,
+          nivelJuego: (sanitizedData as any).nivelJuego,
+          problemasPrincipales: (sanitizedData as any).problemasPrincipales,
+          otrasProblematicas: (sanitizedData as any).otrasProblematicas,
+          mayorReto: (sanitizedData as any).mayorReto,
+          interesEarlyAccess: (sanitizedData as any).interesEarlyAccess,
+          selectedProblems: selectedProblems,
+          additionalComment: additionalComment
         })
         
-        // Actualizar contador de usuarios registrados
-        setUsuariosRegistrados(existingData.length)
+        console.log('✅ Usuario registrado en Firebase con ID:', firebaseId)
         
-        // Registrar envío para límites
-        AntiSpam.recordSubmission()
+        // Actualizar estadísticas desde Firebase
+        const stats = await BetaService.getPublicStats()
+        setUsuariosRegistrados(stats.totalUsers)
+        
+      } catch (firebaseError) {
+        console.error('❌ Error enviando a Firebase:', firebaseError)
+        // Continuar con localStorage como respaldo
       }
       
-      // 6. Marcar como enviado
+      // 6. Guardar datos en localStorage (respaldo)
+      const formDataKey = `refut_early_access_${Date.now()}`
+      const formDataWithTimestamp = {
+          ...sanitizedData,
+        id: formDataKey,
+          source: 'landing_page',
+          selectedProblems: selectedProblems,
+          additionalComment: additionalComment,
+          privacyAccepted: true,
+          termsAccepted: true,
+          userAgent: typeof window !== 'undefined' ? window.navigator.userAgent : '',
+          timestamp: new Date().toISOString()
+      }
+      
+      // Guardar registro individual
+        if (typeof window !== 'undefined') {
+      localStorage.setItem(formDataKey, JSON.stringify(formDataWithTimestamp))
+      
+      // Guardar en lista de registros
+      const existingData = JSON.parse(localStorage.getItem('refut_early_access_list') || '[]')
+      existingData.push(formDataWithTimestamp)
+      localStorage.setItem('refut_early_access_list', JSON.stringify(existingData))
+      
+      console.log('📊 Datos guardados en localStorage:', {
+        individual: formDataWithTimestamp,
+            totalRegistros: existingData.length
+          })
+          
+          // Registrar envío para límites
+          AntiSpam.recordSubmission()
+        }
+      
+      // 7. Marcar como enviado
     setFormularioEnviado(true)
     setTimeout(() => {
       setFormularioEnviado(false)
@@ -148,13 +281,14 @@ const Home: NextPage = () => {
         nivelJuego: '',
         problemasPrincipales: [],
         otrasProblematicas: '',
+        mayorReto: '',
         interesEarlyAccess: false
       })
-        setSelectedProblems([])
-        setAdditionalComment('')
-        setPrivacyAccepted(false)
-        setTermsAccepted(false)
-        setHoneypot('')
+      setSelectedProblems([])
+      setAdditionalComment('')
+      setPrivacyAccepted(false)
+      setTermsAccepted(false)
+      setHoneypot('')
     }, 3000)
       
     } catch (error) {
@@ -166,11 +300,12 @@ const Home: NextPage = () => {
   }
 
   const toggleProblemChecklist = (problema: string) => {
-    setSelectedProblems(prev => 
-      prev.includes(problema) 
-        ? prev.filter(p => p !== problema)
-        : [...prev, problema]
-    )
+    const newSelectedProblems = selectedProblems.includes(problema) 
+      ? selectedProblems.filter(p => p !== problema)
+      : [...selectedProblems, problema]
+    
+    setSelectedProblems(newSelectedProblems)
+    setFormData({...formData, problemasPrincipales: newSelectedProblems})
   }
 
   const toggleFaq = (index: number) => {
@@ -181,7 +316,7 @@ const Home: NextPage = () => {
     <>
       <Head>
         <title>ReFut - Construyamos Juntos la Comunidad del Fútbol Amateur en México</title>
-        <meta name="description" content="Únete a la beta de ReFut y ayúdanos a crear la comunidad que el fútbol amateur necesita en México. Estamos construyendo la plataforma contigo." />
+        <meta name="description" content="Únete a la beta de ReFut. Encuentra canchas, organiza partidos y conecta con jugadores en la ZMG y ayúdanos a crear la comunidad que el fútbol amateur necesita en México. Estamos construyendo la plataforma contigo." />
         <meta name="keywords" content="fútbol amateur México, validación mercado, beta testing, comunidad futbolística, cocreación producto" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta property="og:title" content="ReFut - Construyamos Juntos la Comunidad del Fútbol Amateur" />
@@ -200,20 +335,21 @@ const Home: NextPage = () => {
               <div className="flex items-center">
                 <div className="flex-shrink-0">
                   <Logo variant="default" size="md" />
-                </div>
+              </div>
               </div>
               <div className="hidden md:block">
                 <div className="ml-10 flex items-baseline space-x-4">
+                  <a href="#features" className="text-gray-700 hover:text-green-600 px-3 py-2 rounded-md text-sm font-medium">Funciones</a>
                   <a href="#proposito" className="text-gray-700 hover:text-green-600 px-3 py-2 rounded-md text-sm font-medium">Propósito</a>
                   <a href="#problemas" className="text-gray-700 hover:text-green-600 px-3 py-2 rounded-md text-sm font-medium">Problemas</a>
                   <a href="#estado" className="text-gray-700 hover:text-green-600 px-3 py-2 rounded-md text-sm font-medium">Estado</a>
                   <a href="#faq" className="text-gray-700 hover:text-green-600 px-3 py-2 rounded-md text-sm font-medium">FAQ</a>
-                <button 
-                  onClick={() => setMostrarFormulario(true)}
+                <a 
+                  href="#formulario"
                   className="bg-green-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-green-700 transition-colors"
                 >
-                    Únete a la Beta
-                </button>
+                  Únete a la Beta
+                </a>
                 </div>
               </div>
             </div>
@@ -223,9 +359,11 @@ const Home: NextPage = () => {
         {/* Hero Section */}
         <HeroSection usuariosRegistrados={usuariosRegistrados} onShowForm={() => setMostrarFormulario(true)} />
 
+        {/* Features Section */}
+        <FeaturesSection onShowForm={() => setMostrarFormulario(true)} />
+
         {/* Purpose Section */}
         <PurposeSection />
-
 
         {/* Project Status */}
         <ProjectStatus />
@@ -260,6 +398,12 @@ const Home: NextPage = () => {
           selectedProblems={selectedProblems}
           additionalComment={additionalComment}
           setAdditionalComment={setAdditionalComment}
+          formProgress={formProgress}
+          animateField={animateField}
+          fieldAnimations={fieldAnimations}
+          achievements={achievements}
+          showAchievement={showAchievement}
+          achievementDefinitions={achievementDefinitions}
         />
 
         {/* FAQ Section */}
@@ -291,9 +435,9 @@ const HeroSection = ({ usuariosRegistrados, onShowForm }: { usuariosRegistrados:
         
         {/* Subtítulo */}
         <h2 className="text-xl md:text-2xl text-gray-600 mb-8 max-w-4xl mx-auto font-light">
-          Únete a la beta de ReFut y ayúdanos a crear la plataforma que el fútbol amateur necesita. 
+          Únete a la beta de ReFut donde podrás encontrar canchas, organizar partidos y conectarte con otros jugadores.
           Estamos construyendo la solución contigo, no para ti.
-        </h2>
+        </h2> 
 
         {/* Imagen/Ilustración */}
         <div className="mb-12 animate-fadeIn">
@@ -305,7 +449,7 @@ const HeroSection = ({ usuariosRegistrados, onShowForm }: { usuariosRegistrados:
         </div>
 
         {/* Banner de Validación */}
-        <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 mb-8 max-w-2xl mx-auto">
+        {/* <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 mb-8 max-w-2xl mx-auto">
               <div className="flex items-center">
                 <div className="flex-shrink-0">
               <svg className="h-5 w-5 text-orange-400" fill="currentColor" viewBox="0 0 20 20">
@@ -319,10 +463,10 @@ const HeroSection = ({ usuariosRegistrados, onShowForm }: { usuariosRegistrados:
               </p>
             </div>
           </div>
-        </div>
+        </div> */}
         
         {/* Contador de Usuarios Registrados */}
-        {usuariosRegistrados > 0 && (
+        {/* {usuariosRegistrados > 0 && (
           <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-8 max-w-md mx-auto">
             <div className="flex items-center justify-center">
               <div className="flex-shrink-0">
@@ -337,35 +481,35 @@ const HeroSection = ({ usuariosRegistrados, onShowForm }: { usuariosRegistrados:
                 </div>
             </div>
           </div>
-        )}
+        )} */}
         
         {/* Mensaje motivador cuando no hay usuarios */}
-        {usuariosRegistrados === 0 && (
+        {/* {usuariosRegistrados === 0 && (
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-8 max-w-md mx-auto">
             <div className="flex items-center justify-center">
               <div className="flex-shrink-0">
                 <svg className="h-5 w-5 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-                </svg>
-              </div>
-              <div className="ml-3">
-                <p className="text-sm text-blue-800">
+                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <div className="ml-3">
+                  <p className="text-sm text-blue-800">
                   <strong>🚀 Sé el primero</strong> en unirte a la comunidad que está construyendo el futuro del fútbol amateur
-                </p>
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
-        )}
+        )} */}
         
         {/* CTA Button */}
         <div className="flex justify-center">
-          <button 
-            onClick={onShowForm}
-            className="bg-green-600 text-white px-12 py-4 rounded-lg text-xl font-semibold hover:bg-green-700 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1"
-          >
-            🚀 Únete a la Beta Gratuita
-          </button>
-        </div>
+            <a 
+              href="#formulario"
+              className="bg-green-600 text-white px-12 py-4 rounded-lg text-xl font-semibold hover:bg-green-700 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+            >
+              Únete a la Beta Gratuita
+            </a>
+            </div>
           </div>
         </section>
   )
@@ -390,9 +534,7 @@ const PurposeSection = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <div className="text-center p-6">
             <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                  </svg>
+              <FaLightbulb className="w-8 h-8 text-blue-600" />
                 </div>
             <h3 className="text-xl font-semibold text-gray-900 mb-3">Identificamos Problemas Reales</h3>
                 <p className="text-gray-600">
@@ -402,9 +544,7 @@ const PurposeSection = () => {
               
               <div className="text-center p-6">
             <div className="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4" />
-                  </svg>
+              <FaCog className="w-8 h-8 text-green-600" />
                 </div>
             <h3 className="text-xl font-semibold text-gray-900 mb-3">Cocreación Activa</h3>
                 <p className="text-gray-600">
@@ -414,20 +554,119 @@ const PurposeSection = () => {
               
               <div className="text-center p-6">
             <div className="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <svg className="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                  </svg>
+              <FaUsers className="w-8 h-8 text-purple-600" />
                 </div>
             <h3 className="text-xl font-semibold text-gray-900 mb-3">Comunidad Primero</h3>
                 <p className="text-gray-600">
               Construimos una comunidad real de personas apasionadas por el fútbol amateur en México.
-            </p>
-          </div>
+                </p>
+              </div>
         </div>
       </div>
     </section>
   )
 }
+
+// Features Section Component
+const FeaturesSection = ({ onShowForm }: { onShowForm: () => void }) => {
+  return (
+    <section id="features" className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
+      <div className="max-w-7xl mx-auto">
+        <div className="text-center mb-16">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
+            ¿Qué Podrás Hacer con ReFut?
+          </h2>
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            Estamos construyendo las herramientas que necesitas para revolucionar tu experiencia en el fútbol amateur
+          </p>
+                </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {/* Feature 1 - Mapa Interactivo */}
+          <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
+            <div className="w-12 h-12 mb-4 mx-auto flex items-center justify-center">
+              <FaMapMarkedAlt className="w-8 h-8 text-green-600" />
+            </div>
+            <h3 className="text-xl font-semibold text-gray-900 mb-3 text-center">Mapa Interactivo de Canchas</h3>
+                <p className="text-gray-600">
+              Encuentra canchas públicas y privadas cerca de ti con filtros por precio, horarios y amenidades
+                </p>
+              </div>
+
+          {/* Feature 2 - Organización de Partidos */}
+          <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
+            <div className="w-12 h-12 mb-4 mx-auto flex items-center justify-center">
+              <FaUsers className="w-8 h-8 text-green-600" />
+            </div>
+            <h3 className="text-xl font-semibold text-gray-900 mb-3 text-center">Organización de Partidos</h3>
+                <p className="text-gray-600 text-center">
+              Crea partidos, invita jugadores, confirma asistencia y gestiona equipos de forma fácil
+                </p>
+              </div>
+
+          {/* Feature 3 - Marcador en Vivo */}
+          <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
+            <div className="w-12 h-12 mb-4 mx-auto flex items-center justify-center">
+              <FaChartLine className="w-8 h-8 text-green-600" />
+            </div>
+            <h3 className="text-xl font-semibold text-gray-900 mb-3 text-center">Marcador en Vivo</h3>
+                <p className="text-gray-600 text-center">
+              Sigue el marcador en tiempo real con estadísticas detalladas y historial de eventos
+                </p>
+              </div>
+
+          {/* Feature 4 - Notificaciones Inteligentes */}
+          <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
+            <div className="w-12 h-12 mb-4 mx-auto flex items-center justify-center">
+              <FaBell className="w-8 h-8 text-green-600" />
+            </div>
+            <h3 className="text-xl font-semibold text-gray-900 mb-3 text-center">Notificaciones Inteligentes</h3>
+                <p className="text-gray-600 text-center">
+              Recibe alertas sobre cambios de horario, cancelaciones y recordatorios de partidos
+                </p>
+              </div>
+            
+          {/* Feature 5 - Sistema de Reputación */}
+          <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
+            <div className="w-12 h-12 mb-4 mx-auto flex items-center justify-center">
+              <FaStar className="w-8 h-8 text-green-600" />
+            </div>
+            <h3 className="text-xl font-semibold text-gray-900 mb-3 text-center">Sistema de Reputación</h3>
+                <p className="text-gray-600 text-center">
+              Califica canchas, árbitros y organizadores para ayudar a la comunidad
+                </p>
+              </div>
+
+          {/* Feature 6 - Torneos y Ligas */}
+          <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
+            <div className="w-12 h-12 mb-4 mx-auto flex items-center justify-center">
+              <FaTrophy className="w-8 h-8 text-green-600" />
+            </div>
+            <h3 className="text-xl font-semibold text-gray-900 mb-3 text-center">Torneos y Ligas</h3>
+            <p className="text-gray-600 text-center">
+              Participa en torneos locales, sigue brackets y compite por el primer lugar
+            </p>
+          </div>
+        </div>
+
+        {/* Call to Action */}
+        <div className="text-center mt-12">
+          <p className="text-lg text-gray-600 mb-6">
+            ¿Te interesa alguna de estas funcionalidades? ¡Únete a la beta y ayúdanos a priorizarlas!
+          </p>
+            <a 
+              href="#formulario"
+              className="bg-green-600 text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-green-700 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+            >
+              Quiero Probar ReFut
+            </a>
+            </div>
+          </div>
+        </section>
+  )
+}
+
+
 
 // Problems Checklist Component
 const ProblemsChecklist = ({ 
@@ -441,25 +680,23 @@ const ProblemsChecklist = ({
   return (
     <section id="problemas" className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
       <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-16">
+            <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
             Ayúdanos a Entender tus Problemas
-          </h2>
+              </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
             Selecciona los problemas que más te afectan. Esta información es crucial para construir 
             la solución que realmente necesitas.
-                </p>
-              </div>
-
+              </p>
+            </div>
+            
         <div className="bg-white rounded-2xl shadow-lg p-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             {/* Problemas de Jugadores */}
             <div>
               <h3 className="text-2xl font-semibold text-gray-900 mb-6 flex items-center">
                 <span className="bg-green-100 p-2 rounded-lg mr-3">
-                  <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                  </svg>
+                  <FaUser className="w-6 h-6 text-green-600" />
                 </span>
                 Como Jugador
               </h3>
@@ -475,16 +712,14 @@ const ProblemsChecklist = ({
                     <span className="text-gray-700">{problema}</span>
                   </label>
                 ))}
-              </div>
                 </div>
+          </div>
 
             {/* Problemas de Organizadores */}
             <div>
               <h3 className="text-2xl font-semibold text-gray-900 mb-6 flex items-center">
                 <span className="bg-blue-100 p-2 rounded-lg mr-3">
-                  <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                  </svg>
+                  <FaBuilding className="w-6 h-6 text-blue-600" />
                 </span>
                 Como Organizador/Dueño de Cancha
               </h3>
@@ -502,7 +737,7 @@ const ProblemsChecklist = ({
                 ))}
               </div>
             </div>
-          </div>
+                </div>
 
           {/* Comentario Adicional */}
           <div className="mt-8 pt-8 border-t border-gray-200">
@@ -518,8 +753,8 @@ const ProblemsChecklist = ({
             />
             <p className="text-xs text-gray-500 mt-2">
               Tu experiencia nos ayuda a crear la solución perfecta para todos
-            </p>
-          </div>
+                </p>
+              </div>
 
           {/* Resumen de Selección */}
           {selectedProblems.length > 0 && (
@@ -549,14 +784,14 @@ const ProjectStatus = () => {
       phase: "Diseño de Solución",
       status: "En Progreso", 
       description: "Definiendo funcionalidades basadas en feedback real",
-      progress: 60,
+      progress: 70,
       color: "blue"
     },
     {
       phase: "Desarrollo Técnico",
       status: "Iniciando",
       description: "Programación de la plataforma con enfoque en MVP",
-      progress: 30,
+      progress: 60,
       color: "purple"
     },
     {
@@ -574,7 +809,7 @@ const ProjectStatus = () => {
             <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
             Estado del Proyecto
-              </h2>
+            </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
             Transparencia total sobre nuestro progreso. Te mantenemos informado de cada paso.
               </p>
@@ -624,32 +859,44 @@ const ProjectStatus = () => {
 const EarlyBenefits = () => {
   const benefits = [
     {
-      icon: "🎯",
+      icon: (
+        <FaBolt className="w-8 h-8 text-green-600" />
+      ),
       title: "Acceso Prioritario",
       description: "Sé de los primeros en probar ReFut cuando esté listo"
     },
     {
-      icon: "💬",
+      icon: (
+        <FaComments className="w-8 h-8 text-green-600" />
+      ),
       title: "Participación Directa",
       description: "Influencia real en el desarrollo y diseño de funcionalidades"
     },
     {
-      icon: "🎁",
+      icon: (
+        <FaDollarSign className="w-8 h-8 text-green-600" />
+      ),
       title: "Beneficios Exclusivos",
       description: "Descuentos especiales y funciones premium gratuitas"
     },
     {
-      icon: "🏆",
+      icon: (
+        <FaGift className="w-8 h-8 text-green-600" />
+      ),
       title: "Sorteos y Premios",
       description: "Participa en sorteos exclusivos para la comunidad beta"
     },
     {
-      icon: "👥",
+      icon: (
+        <FaUsers className="w-8 h-8 text-green-600" />
+      ),
       title: "Red de Contactos",
       description: "Conecta con otros jugadores y organizadores apasionados"
     },
     {
-      icon: "📊",
+      icon: (
+        <FaChartLine className="w-8 h-8 text-green-600" />
+      ),
       title: "Reportes de Progreso",
       description: "Recibe actualizaciones exclusivas sobre el desarrollo"
     }
@@ -659,26 +906,28 @@ const EarlyBenefits = () => {
     <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-green-50 to-blue-50">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6 text-center">
             Beneficios Exclusivos del Registro Temprano
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
             Al unirte a nuestra beta, obtienes acceso a beneficios únicos que no estarán disponibles 
             para usuarios posteriores.
           </p>
-        </div>
+              </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {benefits.map((benefit, index) => (
             <div key={index} className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow border border-gray-100">
-              <div className="text-4xl mb-4">{benefit.icon}</div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">{benefit.title}</h3>
-              <p className="text-gray-600 leading-relaxed">{benefit.description}</p>
+              <div className="w-12 h-12 mb-4 mx-auto flex items-center justify-center">
+                {benefit.icon}
             </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-3 text-center">{benefit.title}</h3>
+              <p className="text-gray-600 leading-relaxed text-center">{benefit.description}</p>
+          </div>
           ))}
         </div>
-      </div>
-    </section>
+          </div>
+        </section>
   )
 }
 
@@ -695,11 +944,13 @@ const HonestTestimonials = () => {
             Estamos construyendo relaciones auténticas con nuestra comunidad. 
             Las historias reales llegarán cuando tengamos usuarios usando ReFut.
           </p>
-        </div>
+                </div>
 
         <div className="bg-white rounded-2xl shadow-lg p-8 text-center">
           <div className="max-w-2xl mx-auto">
-            <div className="text-6xl mb-6">🚧</div>
+            <div className="text-6xl mb-6">
+              <FaCheckCircle className="w-16 h-16 mx-auto text-blue-600" />
+                    </div>
             <h3 className="text-2xl font-semibold text-gray-900 mb-4">
               Construyendo Historias Auténticas
             </h3>
@@ -712,8 +963,8 @@ const HonestTestimonials = () => {
                 "¿Quieres ser parte de las primeras historias reales de ReFut? 
                 Únete a nuestra beta y ayúdanos a crear experiencias auténticas."
               </p>
-            </div>
-          </div>
+                    </div>
+                  </div>
             </div>
           </div>
         </section>
@@ -738,24 +989,20 @@ const CocreationCall = () => {
             <div className="text-center">
               <div className="text-3xl font-bold text-green-200 mb-2">Tu Voz</div>
               <div className="text-sm opacity-90">Cuenta Realmente</div>
-            </div>
+                    </div>
             <div className="text-center">
               <div className="text-3xl font-bold text-green-200 mb-2">Tu Experiencia</div>
               <div className="text-sm opacity-90">Moldea el Producto</div>
-              </div>
+                  </div>
             <div className="text-center">
               <div className="text-3xl font-bold text-green-200 mb-2">Tu Comunidad</div>
               <div className="text-sm opacity-90">Crece Contigo</div>
             </div>
-          </div>
+                    </div>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="bg-white text-green-600 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-100 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1">
-              🚀 Únete Ahora
-                  </button>
-            <a href="#problemas" className="bg-white/20 text-white px-8 py-4 rounded-lg text-lg font-semibold border border-white/30 hover:bg-white/30 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1">
-              📋 Cuéntanos tus Problemas
-            </a>
+            
+          
                     </div>
                     </div>
                   </div>
@@ -783,17 +1030,74 @@ const EarlyAccessForm = ({
   setHoneypot,
   selectedProblems,
   additionalComment,
-  setAdditionalComment
+  setAdditionalComment,
+  formProgress,
+  animateField,
+  fieldAnimations,
+  achievements,
+  showAchievement,
+  achievementDefinitions
 }: any) => {
   return (
-    <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-green-50 to-blue-50">
+    <section id="formulario" className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-green-50 to-blue-50">
       <div className="max-w-4xl mx-auto text-center">
         <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
           Completa tu Registro para la Beta
         </h2>
-        <p className="text-xl text-gray-600 mb-12">
+        <p className="text-xl text-gray-600 mb-8">
           Llena el formulario para unirte a la comunidad que está construyendo el futuro del fútbol amateur
         </p>
+
+        {/* Barra de Progreso */}
+        <div className="mb-8 animate-slideIn">
+          <div className="flex justify-between items-center mb-2">
+            <span className="text-sm font-medium text-gray-700">Progreso del formulario</span>
+            <span className="text-sm font-bold text-green-600">{Math.round(formProgress)}%</span>
+          </div>
+          <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+            <div 
+              className="progress-bar h-3 rounded-full transition-all duration-500 ease-out"
+              style={{ width: `${formProgress}%` }}
+            />
+          </div>
+          <p className="text-xs text-gray-500 mt-2">
+            {formProgress === 100 ? '¡Formulario completo! 🎉' : 
+             formProgress >= 75 ? '¡Casi terminamos! 💪' :
+             formProgress >= 50 ? '¡Vamos bien! 👍' :
+             formProgress >= 25 ? '¡Sigue así! 🚀' : '¡Empecemos! ⚽'}
+          </p>
+        </div>
+
+        {/* Notificación de Logros */}
+        {showAchievement && (
+          <div className="fixed top-4 right-4 z-50 animate-slideIn">
+            <div className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white p-4 rounded-lg shadow-xl border-2 border-yellow-300 max-w-sm">
+              <div className="flex items-center">
+                <div className="text-2xl mr-3 animate-bounce">
+                  {achievementDefinitions[showAchievement as keyof typeof achievementDefinitions]?.title.split(' ')[0]}
+                </div>
+                      <div>
+                  <h4 className="font-bold text-sm">
+                    {achievementDefinitions[showAchievement as keyof typeof achievementDefinitions]?.title}
+                  </h4>
+                  <p className="text-xs opacity-90">
+                    {achievementDefinitions[showAchievement as keyof typeof achievementDefinitions]?.description}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Contador de Logros */}
+        {achievements.length > 0 && (
+          <div className="mb-6 text-center">
+            <div className="inline-flex items-center px-3 py-1 rounded-full bg-yellow-100 text-yellow-800 text-sm font-medium">
+              <span className="mr-2">🏆</span>
+              {achievements.length} logro{achievements.length !== 1 ? 's' : ''} desbloqueado{achievements.length !== 1 ? 's' : ''}
+            </div>
+          </div>
+        )}
 
         <div className="bg-white rounded-2xl shadow-xl p-8 max-w-4xl mx-auto">
           <div className="text-center mb-8">
@@ -806,7 +1110,7 @@ const EarlyAccessForm = ({
                     </div>
 
           {/* Aviso de Privacidad */}
-          <PrivacyNotice className="mb-6" />
+          {/* <PrivacyNotice className="mb-6" /> */}
 
           {/* Errores generales */}
           {formErrors.general && (
@@ -822,8 +1126,8 @@ const EarlyAccessForm = ({
 
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Honeypot (campo oculto anti-spam) */}
-            <input
-              type="text"
+                        <input
+                          type="text"
               name="website"
               value={honeypot}
               onChange={(e) => setHoneypot(e.target.value)}
@@ -832,46 +1136,102 @@ const EarlyAccessForm = ({
               autoComplete="off"
             />
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <input
-                          type="text"
-                  placeholder="Tu nombre completo"
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div>
+        <input
+          type="text"
+          placeholder="Tu nombre completo"
                           value={formData.nombre}
-                          onChange={(e) => setFormData({...formData, nombre: e.target.value})}
-                  className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent ${
-                    formErrors.nombre ? 'border-red-300 bg-red-50' : 'border-gray-300'
-                  }`}
+          onChange={(e) => {
+            setFormData({...formData, nombre: e.target.value})
+          }}
+          className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300 ${
+            formErrors.nombre ? 'border-red-500' : 'border-gray-300 hover:border-green-300'
+          }`}
                           required
-                  maxLength={50}
+          maxLength={50}
                         />
-                {formErrors.nombre && (
-                  <p className="text-red-500 text-xs mt-1">{formErrors.nombre}</p>
-                )}
+        {formErrors.nombre && (
+          <p className="text-red-500 text-xs mt-1">{formErrors.nombre}</p>
+        )}
                       </div>
               
                       <div>
                         <input
                           type="email"
-                  placeholder="Tu email"
+          placeholder="Tu email"
                           value={formData.email}
-                          onChange={(e) => setFormData({...formData, email: e.target.value})}
-                  className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent ${
-                    formErrors.email ? 'border-red-300 bg-red-50' : 'border-gray-300'
-                  }`}
+          onChange={(e) => {
+            setFormData({...formData, email: e.target.value})
+          }}
+          className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300 ${
+            formErrors.email ? 'border-red-500' : 'border-gray-300 hover:border-green-300'
+          }`}
                           required
-                  maxLength={254}
-                />
-                {formErrors.email && (
-                  <p className="text-red-500 text-xs mt-1">{formErrors.email}</p>
-                )}
+          maxLength={254}
+                        />
+        {formErrors.email && (
+          <p className="text-red-500 text-xs mt-1">{formErrors.email}</p>
+        )}
+                    </div>
+
+                      <div>
+                        <select
+                          value={formData.ubicacion}
+          onChange={(e) => {
+            setFormData({...formData, ubicacion: e.target.value})
+          }}
+          className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300 ${
+            formErrors.ubicacion ? 'border-red-500' : 'border-gray-300 hover:border-green-300'
+          }`}
+                          required
+                        >
+          <option value="">Selecciona tu zona</option>
+          <option value="Guadalajara Centro">Guadalajara Centro</option>
+          <option value="Zapopan">Zapopan</option>
+          <option value="Tlaquepaque">Tlaquepaque</option>
+          <option value="Tonalá">Tonalá</option>
+          <option value="San Pedro Tlaquepaque">San Pedro Tlaquepaque</option>
+          <option value="El Salto">El Salto</option>
+          <option value="Juanacatlán">Juanacatlán</option>
+          <option value="Ixtlahuacán de los Membrillos">Ixtlahuacán de los Membrillos</option>
+          <option value="Zapotlanejo">Zapotlanejo</option>
+          <option value="Otra zona">Otra zona</option>
+                        </select>
+        {formErrors.ubicacion && (
+          <p className="text-red-500 text-xs mt-1">{formErrors.ubicacion}</p>
+        )}
+                      </div>
+
+                      <div>
+                        <select
+                          value={formData.nivelJuego}
+          onChange={(e) => {
+            setFormData({...formData, nivelJuego: e.target.value})
+          }}
+          className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300 ${
+            formErrors.nivelJuego ? 'border-red-500' : 'border-gray-300 hover:border-green-300'
+          }`}
+          required
+        >
+          <option value="">Tu nivel de fútbol</option>
+          <option value="Principiante">Principiante</option>
+          <option value="Intermedio">Intermedio</option>
+          <option value="Avanzado">Avanzado</option>
+          <option value="Semi-profesional">Semi-profesional</option>
+          <option value="Ex-profesional">Ex-profesional</option>
+                        </select>
+        {formErrors.nivelJuego && (
+          <p className="text-red-500 text-xs mt-1">{formErrors.nivelJuego}</p>
+        )}
                       </div>
                     </div>
 
+
             {/* Sección de Problemas */}
-            <div className="bg-gray-50 rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4 text-left">
-                📋 Ayúdanos a Entender tus Problemas
+            <div className="bg-gray-50 rounded-lg p-6 animate-fadeIn">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4 text-center">
+                Ayúdanos a Entender tus Problemas
               </h3>
               <p className="text-sm text-gray-600 mb-4 text-left">
                 Selecciona los problemas que más enfrentas al jugar fútbol amateur:
@@ -879,61 +1239,74 @@ const EarlyAccessForm = ({
               
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
                 {problemasPrincipales.map((problema: string, index: number) => (
-                  <label key={index} className="flex items-start p-3 rounded-lg hover:bg-gray-100 transition-colors">
-                    <input
-                      type="checkbox"
+                  <label 
+                    key={index} 
+                    className={`flex items-start p-3 rounded-lg transition-all duration-300 cursor-pointer ${
+                      selectedProblems.includes(problema) 
+                        ? 'bg-green-100 border-2 border-green-300 shadow-md' 
+                        : 'hover:bg-gray-100 border-2 border-transparent'
+                    }`}
+                  >
+                            <input
+                              type="checkbox"
                       checked={selectedProblems.includes(problema)}
                       onChange={() => toggleProblemChecklist(problema)}
                       className="mt-1 h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded flex-shrink-0"
                     />
-                    <span className="ml-3 text-sm text-gray-700 leading-relaxed">{problema}</span>
-                  </label>
-                ))}
-              </div>
-              
-              <div>
+                    <span className={`ml-3 text-sm leading-relaxed ${
+                      selectedProblems.includes(problema) ? 'text-green-800 font-medium' : 'text-gray-700'
+                    }`}>
+                      {problema}
+                    </span>
+                          </label>
+                        ))}
+                      </div>
+
+              {/* Contador de problemas seleccionados */}
+              <div className="text-center mb-4">
+                <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium transition-all duration-300 ${
+                  selectedProblems.length > 0 
+                    ? 'bg-green-100 text-green-800 animate-pulse' 
+                    : 'bg-gray-100 text-gray-600'
+                }`}>
+                  {selectedProblems.length} problema{selectedProblems.length !== 1 ? 's' : ''} seleccionado{selectedProblems.length !== 1 ? 's' : ''}
+                </span>
+                    </div>
+
+                    <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2 text-left">
                   ¿Cuál es tu mayor reto en el fútbol amateur? (Campo obligatorio)
-                </label>
-                <textarea
+                      </label>
+                      <textarea
                   value={formData.mayorReto}
-                  onChange={(e) => setFormData({...formData, mayorReto: e.target.value})}
+                  onChange={(e) => {
+                    setFormData({...formData, mayorReto: e.target.value})
+                  }}
                   placeholder="Describe el problema más importante que enfrentas al jugar fútbol amateur..."
-                  className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent h-24 resize-none ${
-                    formErrors.mayorReto ? 'border-red-300 bg-red-50' : 'border-gray-300'
+                  className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent h-24 resize-none transition-all duration-300 ${
+                    formErrors.mayorReto ? 'border-red-500' : 'border-gray-300 hover:border-green-300'
                   }`}
-                  rows={3}
+                        rows={3}
                   required
                   maxLength={500}
-                />
+                      />
                 <p className="text-xs text-gray-500 mt-2 text-left">
-                  Esta información es crucial para construir la solución que necesitas
-                </p>
+                        Tu experiencia nos ayuda a mejorar ReFut para todos los jugadores
+                      </p>
                 {formErrors.mayorReto && (
                   <p className="text-red-500 text-xs mt-1">{formErrors.mayorReto}</p>
                 )}
-              </div>
-              
-              <div className="mt-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2 text-left">
-                  Comentario adicional (opcional)
-                </label>
-                <textarea
-                  value={additionalComment}
-                  onChange={(e) => setAdditionalComment(e.target.value)}
-                  placeholder="Cualquier otra información que quieras compartir..."
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent h-20 resize-none"
-                  rows={2}
-                  maxLength={300}
-                />
-              </div>
+                    </div>
+
+    
             </div>
 
             {/* Checkbox de términos y condiciones */}
             <div className="space-y-3">
+              {/* Checkbox de Términos y Condiciones */}
               <div className="flex items-start">
-                            <input
-                              type="checkbox"
+                      <input
+                        type="checkbox"
                   id="terms"
                   checked={termsAccepted}
                   onChange={(e) => setTermsAccepted(e.target.checked)}
@@ -942,23 +1315,35 @@ const EarlyAccessForm = ({
                 />
                 <label htmlFor="terms" className="ml-3 text-sm text-gray-700">
                   Acepto los{' '}
-                  <button
-                    type="button"
+                  <a 
+                    href="/terminos" 
                     className="text-green-600 hover:text-green-800 underline"
-                    onClick={() => setPrivacyAccepted(true)}
                   >
                     términos y condiciones
-                  </button>
-                  {' '}y el{' '}
-                  <button
-                    type="button"
+                  </a>
+                </label>
+              </div>
+
+              {/* Checkbox de Aviso de Privacidad */}
+              <div className="flex items-start">
+                <input
+                  type="checkbox"
+                  id="privacy"
+                  checked={privacyAccepted}
+                  onChange={(e) => setPrivacyAccepted(e.target.checked)}
+                  className="mt-1 h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
+                  required
+                />
+                <label htmlFor="privacy" className="ml-3 text-sm text-gray-700">
+                  Acepto el{' '}
+                  <a 
+                    href="/privacidad" 
                     className="text-green-600 hover:text-green-800 underline"
-                    onClick={() => setPrivacyAccepted(true)}
                   >
                     aviso de privacidad
-                  </button>
-                          </label>
-                    </div>
+                  </a>
+                </label>
+              </div>
 
               <div className="flex items-start">
                       <input
@@ -981,32 +1366,41 @@ const EarlyAccessForm = ({
                       <button
               type="submit"
               disabled={isSubmitting}
-              className={`w-full py-4 px-8 rounded-lg text-lg font-semibold transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1 ${
+              className={`w-full py-4 px-8 rounded-lg text-lg font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 focus:outline-none focus:ring-4 focus:ring-green-300 ${
                 isSubmitting 
                   ? 'bg-gray-400 cursor-not-allowed' 
-                  : 'bg-green-600 hover:bg-green-700 text-white'
+                  : formProgress === 100
+                    ? 'bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white hover-glow animate-pulse'
+                    : 'bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white hover-glow'
               }`}
             >
               {isSubmitting ? (
                 <span className="flex items-center justify-center">
-                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
+                  <FaSpinner className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" />
                   Enviando...
                 </span>
               ) : formularioEnviado ? (
-                '✅ ¡Registro Completado!'
+                <span className="flex items-center justify-center animate-bounce">
+                  ✅ ¡Registro Completado!
+                </span>
+              ) : formProgress === 100 ? (
+                <span className="flex items-center justify-center">
+                  🚀 ¡Listo para Enviar!
+                </span>
               ) : (
-                '🚀 Finalizar Registro'
+                <span className="flex items-center justify-center">
+                  {formProgress >= 75 ? '💪 Casi Terminamos' :
+                   formProgress >= 50 ? '👍 Vamos Bien' :
+                   formProgress >= 25 ? '🚀 Sigue Así' : '⚽ Empecemos'}
+                </span>
               )}
                       </button>
           </form>
 
           <div className="mt-6 text-sm text-gray-500">
-            <p>✅ Acceso gratuito a la beta</p>
-            <p>✅ Participación directa en el desarrollo</p>
-            <p>✅ Beneficios exclusivos para early adopters</p>
+            <p>Acceso gratuito a la beta</p>
+            <p>Participación directa en el desarrollo</p>
+            <p>Beneficios exclusivos para early adopters</p>
           </div>
         </div>
       </div>
@@ -1057,16 +1451,11 @@ const FAQSection = ({ faqOpen, toggleFaq }: { faqOpen: number | null, toggleFaq:
                       <button
                 onClick={() => toggleFaq(index)}
                 className="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50 transition-colors"
-              >
+                      >
                 <span className="font-semibold text-gray-900">{faq.question}</span>
-                <svg 
+                <FaChevronDown 
                   className={`w-5 h-5 text-gray-500 transform transition-transform ${faqOpen === index ? 'rotate-180' : ''}`}
-                  fill="none" 
-                  stroke="currentColor" 
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
+                />
                       </button>
               {faqOpen === index && (
                 <div className="px-6 pb-4">
@@ -1075,8 +1464,8 @@ const FAQSection = ({ faqOpen, toggleFaq }: { faqOpen: number | null, toggleFaq:
                 )}
               </div>
           ))}
-        </div>
-      </div>
+            </div>
+          </div>
     </section>
   )
 }
@@ -1097,7 +1486,7 @@ const DirectContact = () => {
           <div className="bg-green-50 p-6 rounded-xl">
             <div className="text-4xl mb-4">💬</div>
             <h3 className="text-xl font-semibold text-gray-900 mb-2">WhatsApp</h3>
-            <p className="text-gray-600 mb-4">Chatea directamente con nosotros</p>
+            <p className="text-gray-600 mb-4">Chatea con nosotros</p>
             <a 
               href="https://wa.me/5213310475942" 
               target="_blank" 
@@ -1170,20 +1559,29 @@ const Footer = () => {
               Tu voz, tu experiencia, tu comunidad.
             </p>
             <div className="flex space-x-4">
+              {/* WhatsApp */}
               <a href="https://wa.me/5213310475942" className="text-gray-400 hover:text-green-400 transition-colors">
-                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.488"/>
-                </svg>
+              <FaWhatsapp className="w-6 h-6" />
               </a>
-              <a href="https://instagram.com/refut.mx" className="text-gray-400 hover:text-green-400 transition-colors">
-                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 6.62 5.367 11.987 11.988 11.987 6.62 0 11.987-5.367 11.987-11.987C24.014 5.367 18.637.001 12.017.001zM8.449 16.988c-1.297 0-2.448-.49-3.323-1.297C4.198 14.895 3.708 13.744 3.708 12.447s.49-2.448 1.297-3.323c.875-.807 2.026-1.297 3.323-1.297s2.448.49 3.323 1.297c.807.875 1.297 2.026 1.297 3.323s-.49 2.448-1.297 3.323c-.875.807-2.026 1.297-3.323 1.297zm7.83-9.281c-.49 0-.875-.385-.875-.875s.385-.875.875-.875.875.385.875.875-.385.875-.875.875zm-3.323 9.281c-2.448 0-4.448-2-4.448-4.448s2-4.448 4.448-4.448 4.448 2 4.448 4.448-2 4.448-4.448 4.448z"/>
-                </svg>
+              
+              {/* Instagram */}
+              <a href="https://instagram.com/refut.mx" className="text-gray-400 hover:text-pink-400 transition-colors">
+                <FaInstagram className="w-6 h-6" />
               </a>
+              
+              {/* Facebook */}
+              <a href="https://facebook.com/refut.mx" className="text-gray-400 hover:text-blue-400 transition-colors">
+                <FaFacebook className="w-6 h-6" />
+              </a>
+              
+              {/* TikTok */}
+              <a href="https://tiktok.com/@refut.mx" className="text-gray-400 hover:text-black transition-colors">
+                <FaTiktok className="w-6 h-6" />
+              </a>
+              
+              {/* Email */}
               <a href="mailto:refut@gmail.com" className="text-gray-400 hover:text-green-400 transition-colors">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                </svg>
+                <FaEnvelope className="w-6 h-6" />
               </a>
             </div>
           </div>

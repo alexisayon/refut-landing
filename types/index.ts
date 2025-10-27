@@ -5,6 +5,7 @@ export interface FormData {
   nivelJuego: string
   problemasPrincipales: string[]
   otrasProblematicas: string
+  mayorReto: string
   interesEarlyAccess: boolean
 }
 

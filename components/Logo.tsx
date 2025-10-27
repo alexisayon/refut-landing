@@ -35,7 +35,7 @@ export const Logo = ({
         width={size === 'sm' ? 96 : size === 'md' ? 120 : 144}
         height={size === 'sm' ? 32 : size === 'md' ? 40 : 48}
         className="h-full w-full object-contain"
-        priority
+        priority={true}
       />
     </div>
   )

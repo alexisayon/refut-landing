@@ -18,6 +18,7 @@ export interface BetaRegistration {
   nivelJuego: string
   problemasPrincipales: string[]
   otrasProblematicas: string
+  mayorReto: string
   interesEarlyAccess: boolean
   selectedProblems?: string[]
   additionalComment?: string

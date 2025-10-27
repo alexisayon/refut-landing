@@ -72,10 +72,59 @@ export class FormValidator {
     return { isValid: true }
   }
 
+  // Validar ubicación
+  static validateUbicacion(ubicacion: string): { isValid: boolean; error?: string } {
+    if (!ubicacion) {
+      return { isValid: false, error: 'La ubicación es requerida' }
+    }
+    
+    const validUbicaciones = [
+      'Guadalajara Centro',
+      'Zapopan',
+      'Tlaquepaque',
+      'Tonalá',
+      'San Pedro Tlaquepaque',
+      'El Salto',
+      'Juanacatlán',
+      'Ixtlahuacán de los Membrillos',
+      'Zapotlanejo',
+      'Otra zona'
+    ]
+    
+    if (!validUbicaciones.includes(ubicacion)) {
+      return { isValid: false, error: 'Selecciona una ubicación válida' }
+    }
+    
+    return { isValid: true }
+  }
+
+  // Validar nivel de juego
+  static validateNivelJuego(nivelJuego: string): { isValid: boolean; error?: string } {
+    if (!nivelJuego) {
+      return { isValid: false, error: 'El nivel de fútbol es requerido' }
+    }
+    
+    const validNiveles = [
+      'Principiante',
+      'Intermedio',
+      'Avanzado',
+      'Semi-profesional',
+      'Ex-profesional'
+    ]
+    
+    if (!validNiveles.includes(nivelJuego)) {
+      return { isValid: false, error: 'Selecciona un nivel válido' }
+    }
+    
+    return { isValid: true }
+  }
+
   // Validar formulario completo
   static validateForm(formData: {
     nombre: string
     email: string
+    ubicacion: string
+    nivelJuego: string
     mayorReto: string
   }): { isValid: boolean; errors: Record<string, string> } {
     const errors: Record<string, string> = {}
@@ -88,6 +137,16 @@ export class FormValidator {
     const emailValidation = this.validateEmail(formData.email)
     if (!emailValidation.isValid) {
       errors.email = emailValidation.error!
+    }
+    
+    const ubicacionValidation = this.validateUbicacion(formData.ubicacion)
+    if (!ubicacionValidation.isValid) {
+      errors.ubicacion = ubicacionValidation.error!
+    }
+    
+    const nivelJuegoValidation = this.validateNivelJuego(formData.nivelJuego)
+    if (!nivelJuegoValidation.isValid) {
+      errors.nivelJuego = nivelJuegoValidation.error!
     }
     
     const commentValidation = this.validateComment(formData.mayorReto)
@@ -106,7 +165,12 @@ export class FormValidator {
     return {
       nombre: this.sanitizeText(formData.nombre || ''),
       email: this.sanitizeText(formData.email || '').toLowerCase(),
+      ubicacion: this.sanitizeText(formData.ubicacion || ''),
+      nivelJuego: this.sanitizeText(formData.nivelJuego || ''),
+      problemasPrincipales: formData.problemasPrincipales || [],
+      otrasProblematicas: this.sanitizeText(formData.otrasProblematicas || ''),
       mayorReto: this.sanitizeText(formData.mayorReto || ''),
+      interesEarlyAccess: formData.interesEarlyAccess || false,
       timestamp: new Date().toISOString(),
       source: 'landing_page',
       userAgent: typeof window !== 'undefined' ? window.navigator.userAgent : '',

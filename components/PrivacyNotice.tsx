@@ -17,7 +17,7 @@ export const PrivacyNotice = ({ className = '' }: PrivacyNoticeProps) => {
         </div>
         <div className="ml-4 flex-1">
           <h3 className="text-lg font-semibold text-blue-900 mb-2">
-            🔒 Aviso de Privacidad y Protección de Datos
+            Aviso de Privacidad y Protección de Datos
           </h3>
           
           <div className="text-sm text-blue-800 space-y-2">
@@ -45,7 +45,7 @@ export const PrivacyNotice = ({ className = '' }: PrivacyNoticeProps) => {
             {showFullText && (
               <div className="mt-4 space-y-3">
                 <div className="bg-white p-4 rounded border">
-                  <h4 className="font-semibold mb-2">📋 Términos de Uso</h4>
+                  <h4 className="font-semibold mb-2">Términos de Uso</h4>
                   <ul className="text-xs space-y-1 list-disc list-inside">
                     <li>Al registrarte, aceptas participar en la fase beta de ReFut</li>
                     <li>Tu información será usada únicamente para desarrollo del producto</li>
@@ -56,7 +56,7 @@ export const PrivacyNotice = ({ className = '' }: PrivacyNoticeProps) => {
                 </div>
                 
                 <div className="bg-white p-4 rounded border">
-                  <h4 className="font-semibold mb-2">🛡️ Protección de Datos</h4>
+                  <h4 className="font-semibold mb-2">Protección de Datos</h4>
                   <ul className="text-xs space-y-1 list-disc list-inside">
                     <li>Datos almacenados en servidores seguros con encriptación SSL/TLS</li>
                     <li>Acceso restringido solo al equipo de desarrollo de ReFut</li>
@@ -67,7 +67,7 @@ export const PrivacyNotice = ({ className = '' }: PrivacyNoticeProps) => {
                 </div>
                 
                 <div className="bg-white p-4 rounded border">
-                  <h4 className="font-semibold mb-2">📞 Comunicación</h4>
+                  <h4 className="font-semibold mb-2">Comunicación</h4>
                   <ul className="text-xs space-y-1 list-disc list-inside">
                     <li>Te contactaremos por email sobre actualizaciones de la beta</li>
                     <li>Podrás recibir invitaciones a pruebas y encuestas</li>
