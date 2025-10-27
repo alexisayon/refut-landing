@@ -2,9 +2,10 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import Link from 'next/link'
 import { useState } from 'react'
+import type { FormData } from '../types'
 
 const Home: NextPage = () => {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     nombre: '',
     email: '',
     ubicacion: '',
@@ -86,7 +87,7 @@ const Home: NextPage = () => {
   }
 
   const toggleProblema = (problema: string) => {
-    const nuevosProblemas = formData.problemasPrincipales.includes(problema)
+    const nuevosProblemas: string[] = formData.problemasPrincipales.includes(problema)
       ? formData.problemasPrincipales.filter(p => p !== problema)
       : [...formData.problemasPrincipales, problema]
     setFormData({...formData, problemasPrincipales: nuevosProblemas})
