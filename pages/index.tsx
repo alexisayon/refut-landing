@@ -1,7 +1,7 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import type { FormData } from '../types'
 
 const Home: NextPage = () => {
@@ -16,6 +16,7 @@ const Home: NextPage = () => {
   })
   const [mostrarFormulario, setMostrarFormulario] = useState(false)
   const [formularioEnviado, setFormularioEnviado] = useState(false)
+  const [usuariosRegistrados, setUsuariosRegistrados] = useState(0)
 
   const problemasPrincipales = [
     'Dificultad para encontrar canchas disponibles',
@@ -27,6 +28,20 @@ const Home: NextPage = () => {
     'Canchas en mal estado',
     'Horarios limitados'
   ]
+
+  // Función para obtener el número de usuarios registrados
+  const obtenerUsuariosRegistrados = () => {
+    if (typeof window !== 'undefined') {
+      const existingData = JSON.parse(localStorage.getItem('refut_early_access_list') || '[]')
+      return existingData.length
+    }
+    return 0
+  }
+
+  // Cargar contador al montar el componente
+  useEffect(() => {
+    setUsuariosRegistrados(obtenerUsuariosRegistrados())
+  }, [])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -69,6 +84,9 @@ const Home: NextPage = () => {
       totalRegistros: existingData.length,
       simpleList: simpleList.length
     })
+    
+    // Actualizar contador de usuarios registrados
+    setUsuariosRegistrados(existingData.length)
     
     setFormularioEnviado(true)
     setTimeout(() => {
@@ -158,6 +176,23 @@ const Home: NextPage = () => {
                 </div>
               </div>
             </div>
+            
+            {/* Contador de Usuarios Registrados */}
+            <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-8 max-w-md mx-auto">
+              <div className="flex items-center justify-center">
+                <div className="flex-shrink-0">
+                  <svg className="h-5 w-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <div className="ml-3">
+                  <p className="text-sm text-green-800">
+                    <strong>👥 {usuariosRegistrados} jugadores</strong> ya se han registrado para el acceso temprano
+                  </p>
+                </div>
+              </div>
+            </div>
+            
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button 
                 disabled
