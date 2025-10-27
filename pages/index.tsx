@@ -87,9 +87,10 @@ const Home: NextPage = () => {
   }
 
   const toggleProblema = (problema: string) => {
-    const nuevosProblemas: string[] = formData.problemasPrincipales.includes(problema)
-      ? formData.problemasPrincipales.filter(p => p !== problema)
-      : [...formData.problemasPrincipales, problema]
+    const currentProblems = formData.problemasPrincipales as string[]
+    const nuevosProblemas: string[] = currentProblems.includes(problema)
+      ? currentProblems.filter(p => p !== problema)
+      : [...currentProblems, problema]
     setFormData({...formData, problemasPrincipales: nuevosProblemas})
   }
 
