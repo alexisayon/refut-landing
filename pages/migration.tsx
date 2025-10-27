@@ -27,10 +27,15 @@ export default function MigrationPage() {
   const loadFirebaseStats = async () => {
     try {
       setLoading(true)
-      // Importar dinámicamente para evitar problemas de SSR
-      const { BetaService } = await import('../lib/betaService')
-      const stats = await BetaService.getPublicStats()
-      setFirebaseStats(stats)
+      // Solo cargar Firebase si las variables de entorno están disponibles
+      if (process.env.NEXT_PUBLIC_FIREBASE_API_KEY) {
+        const { BetaService } = await import('../lib/betaService')
+        const stats = await BetaService.getPublicStats()
+        setFirebaseStats(stats)
+      } else {
+        // Fallback cuando no hay variables de entorno
+        setFirebaseStats({ totalUsers: 0 })
+      }
     } catch (error) {
       console.error('Error cargando estadísticas de Firebase:', error)
       setFirebaseStats({ totalUsers: 0 })
