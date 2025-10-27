@@ -22,8 +22,8 @@ export const Logo = ({
 
   const logoPath = {
     default: '/logo/logorefut.svg',      // Logo principal (isologo)
-    white: '/logo/logorefut2.svg',       // Logo para fondos oscuros
-    dark: '/logo/logorefut.svg',          // Logo para fondos claros
+    white: '/logo/logorefut3.svg',       // Logo para fondos oscuros
+    dark: '/logo/logorefut2.svg',          // Logo para fondos claros
     footer: '/logo/logorefut3.svg'       // Logo para footer (mejor contraste)
   }
 
