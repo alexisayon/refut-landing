@@ -1,15 +1,14 @@
 import { useState } from 'react'
 
 interface PrivacyNoticeProps {
-  onAccept: () => void
-  onDecline: () => void
+  className?: string
 }
 
-export const PrivacyNotice = ({ onAccept, onDecline }: PrivacyNoticeProps) => {
+export const PrivacyNotice = ({ className = '' }: PrivacyNoticeProps) => {
   const [showFullText, setShowFullText] = useState(false)
 
   return (
-    <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
+    <div className={`bg-blue-50 border border-blue-200 rounded-lg p-6 ${className}`}>
       <div className="flex items-start">
         <div className="flex-shrink-0">
           <svg className="h-6 w-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -85,21 +84,6 @@ export const PrivacyNotice = ({ onAccept, onDecline }: PrivacyNoticeProps) => {
                 </button>
               </div>
             )}
-          </div>
-          
-          <div className="mt-4 flex flex-col sm:flex-row gap-3">
-            <button
-              onClick={onAccept}
-              className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-700 transition-colors"
-            >
-              ✅ Acepto y Continuar
-            </button>
-            <button
-              onClick={onDecline}
-              className="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-400 transition-colors"
-            >
-              ❌ No Acepto
-            </button>
           </div>
         </div>
       </div>

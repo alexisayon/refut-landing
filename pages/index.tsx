@@ -165,14 +165,6 @@ const Home: NextPage = () => {
     }
   }
 
-  const toggleProblema = (problema: string) => {
-    const currentProblems: string[] = formData.problemasPrincipales as string[]
-    const nuevosProblemas: string[] = currentProblems.includes(problema)
-      ? currentProblems.filter((p: string) => p !== problema)
-      : [...currentProblems, problema]
-    setFormData({...formData, problemasPrincipales: nuevosProblemas})
-  }
-
   const toggleProblemChecklist = (problema: string) => {
     setSelectedProblems(prev => 
       prev.includes(problema) 
@@ -234,15 +226,6 @@ const Home: NextPage = () => {
         {/* Purpose Section */}
         <PurposeSection />
 
-        {/* Problems Checklist */}
-        <ProblemsChecklist 
-          problemasPrincipales={problemasPrincipales}
-          problemasOrganizadores={problemasOrganizadores}
-          selectedProblems={selectedProblems}
-          toggleProblemChecklist={toggleProblemChecklist}
-          additionalComment={additionalComment}
-          setAdditionalComment={setAdditionalComment}
-        />
 
         {/* Project Status */}
         <ProjectStatus />
@@ -264,7 +247,7 @@ const Home: NextPage = () => {
           setMostrarFormulario={setMostrarFormulario}
           formularioEnviado={formularioEnviado}
           problemasPrincipales={problemasPrincipales}
-          toggleProblema={toggleProblema}
+          toggleProblemChecklist={toggleProblemChecklist}
           handleSubmit={handleSubmit}
           privacyAccepted={privacyAccepted}
           setPrivacyAccepted={setPrivacyAccepted}
@@ -274,6 +257,9 @@ const Home: NextPage = () => {
           isSubmitting={isSubmitting}
           honeypot={honeypot}
           setHoneypot={setHoneypot}
+          selectedProblems={selectedProblems}
+          additionalComment={additionalComment}
+          setAdditionalComment={setAdditionalComment}
         />
 
         {/* FAQ Section */}
@@ -371,21 +357,15 @@ const HeroSection = ({ usuariosRegistrados, onShowForm }: { usuariosRegistrados:
           </div>
         )}
         
-        {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button 
+        {/* CTA Button */}
+        <div className="flex justify-center">
+          <button 
             onClick={onShowForm}
-            className="bg-green-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-green-700 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1"
-              >
-            🚀 Únete a la Beta Gratuita
-              </button>
-          <a 
-            href="#problemas"
-            className="bg-white text-green-600 px-8 py-4 rounded-lg text-lg font-semibold border-2 border-green-600 hover:bg-green-50 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+            className="bg-green-600 text-white px-12 py-4 rounded-lg text-xl font-semibold hover:bg-green-700 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1"
           >
-            📋 Cuéntanos tus Problemas
-          </a>
-            </div>
+            🚀 Únete a la Beta Gratuita
+          </button>
+        </div>
           </div>
         </section>
   )
@@ -791,7 +771,7 @@ const EarlyAccessForm = ({
   setMostrarFormulario, 
   formularioEnviado, 
   problemasPrincipales, 
-  toggleProblema, 
+  toggleProblemChecklist, 
   handleSubmit,
   privacyAccepted,
   setPrivacyAccepted,
@@ -800,7 +780,10 @@ const EarlyAccessForm = ({
   formErrors,
   isSubmitting,
   honeypot,
-  setHoneypot
+  setHoneypot,
+  selectedProblems,
+  additionalComment,
+  setAdditionalComment
 }: any) => {
   return (
     <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-green-50 to-blue-50">
@@ -823,10 +806,7 @@ const EarlyAccessForm = ({
                     </div>
 
           {/* Aviso de Privacidad */}
-          <PrivacyNotice 
-            onAccept={() => setPrivacyAccepted(true)}
-            onDecline={() => setPrivacyAccepted(false)}
-          />
+          <PrivacyNotice className="mb-6" />
 
           {/* Errores generales */}
           {formErrors.general && (
@@ -888,27 +868,65 @@ const EarlyAccessForm = ({
                       </div>
                     </div>
 
-                    <div>
-              <label className="block text-sm font-medium text-gray-700 mb-3 text-left">
-                ¿Cuál es tu mayor reto en el fútbol amateur? (Campo obligatorio)
-                      </label>
-              <textarea
-                value={formData.mayorReto}
-                onChange={(e) => setFormData({...formData, mayorReto: e.target.value})}
-                placeholder="Describe el problema más importante que enfrentas al jugar fútbol amateur..."
-                className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent h-24 resize-none ${
-                  formErrors.mayorReto ? 'border-red-300 bg-red-50' : 'border-gray-300'
-                }`}
-                rows={3}
-                required
-                maxLength={500}
-              />
-              <p className="text-xs text-gray-500 mt-2 text-left">
-                Esta información es crucial para construir la solución que necesitas
+            {/* Sección de Problemas */}
+            <div className="bg-gray-50 rounded-lg p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4 text-left">
+                📋 Ayúdanos a Entender tus Problemas
+              </h3>
+              <p className="text-sm text-gray-600 mb-4 text-left">
+                Selecciona los problemas que más enfrentas al jugar fútbol amateur:
               </p>
-              {formErrors.mayorReto && (
-                <p className="text-red-500 text-xs mt-1">{formErrors.mayorReto}</p>
-              )}
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                {problemasPrincipales.map((problema: string, index: number) => (
+                  <label key={index} className="flex items-start">
+                    <input
+                      type="checkbox"
+                      checked={selectedProblems.includes(problema)}
+                      onChange={() => toggleProblemChecklist(problema)}
+                      className="mt-1 h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
+                    />
+                    <span className="ml-3 text-sm text-gray-700">{problema}</span>
+                  </label>
+                ))}
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2 text-left">
+                  ¿Cuál es tu mayor reto en el fútbol amateur? (Campo obligatorio)
+                </label>
+                <textarea
+                  value={formData.mayorReto}
+                  onChange={(e) => setFormData({...formData, mayorReto: e.target.value})}
+                  placeholder="Describe el problema más importante que enfrentas al jugar fútbol amateur..."
+                  className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent h-24 resize-none ${
+                    formErrors.mayorReto ? 'border-red-300 bg-red-50' : 'border-gray-300'
+                  }`}
+                  rows={3}
+                  required
+                  maxLength={500}
+                />
+                <p className="text-xs text-gray-500 mt-2 text-left">
+                  Esta información es crucial para construir la solución que necesitas
+                </p>
+                {formErrors.mayorReto && (
+                  <p className="text-red-500 text-xs mt-1">{formErrors.mayorReto}</p>
+                )}
+              </div>
+              
+              <div className="mt-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2 text-left">
+                  Comentario adicional (opcional)
+                </label>
+                <textarea
+                  value={additionalComment}
+                  onChange={(e) => setAdditionalComment(e.target.value)}
+                  placeholder="Cualquier otra información que quieras compartir..."
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent h-20 resize-none"
+                  rows={2}
+                  maxLength={300}
+                />
+              </div>
             </div>
 
             {/* Checkbox de términos y condiciones */}
