@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react'
 import Head from 'next/head'
 import { MigrationPanel } from '../components/MigrationPanel'
-import { useFirebaseStats } from '../components/MigrationPanel'
 
 export default function MigrationPage() {
   const [localStorageCount, setLocalStorageCount] = useState(0)
-  const { stats, loading, loadStats } = useFirebaseStats()
+  const [firebaseStats, setFirebaseStats] = useState({ totalUsers: 0 })
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     // Solo ejecutar en el cliente
@@ -19,14 +19,29 @@ export default function MigrationPage() {
         setLocalStorageCount(0)
       }
 
-      // Cargar estadísticas de Firebase
-      loadStats()
+      // Cargar estadísticas de Firebase de forma segura
+      loadFirebaseStats()
     }
-  }, [loadStats])
+  }, [])
+
+  const loadFirebaseStats = async () => {
+    try {
+      setLoading(true)
+      // Importar dinámicamente para evitar problemas de SSR
+      const { BetaService } = await import('../lib/betaService')
+      const stats = await BetaService.getPublicStats()
+      setFirebaseStats(stats)
+    } catch (error) {
+      console.error('Error cargando estadísticas de Firebase:', error)
+      setFirebaseStats({ totalUsers: 0 })
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const handleMigrationComplete = (migrationStats: { migrated: number, errors: number }) => {
     // Recargar estadísticas después de la migración
-    loadStats()
+    loadFirebaseStats()
     setLocalStorageCount(0)
   }
 
@@ -84,14 +99,14 @@ export default function MigrationPage() {
                   <p className="text-sm text-gray-600">Base de datos segura</p>
                 </div>
                 <div className="text-3xl font-bold text-green-600">
-                  {loading ? '...' : stats.totalUsers}
+                  {loading ? '...' : firebaseStats.totalUsers}
                 </div>
               </div>
               <div className="mt-4">
                 <div className="w-full bg-gray-200 rounded-full h-2">
                   <div 
                     className="bg-green-600 h-2 rounded-full transition-all duration-500"
-                    style={{ width: `${Math.min((stats.totalUsers / 10000) * 100, 100)}%` }}
+                    style={{ width: `${Math.min((firebaseStats.totalUsers / 10000) * 100, 100)}%` }}
                   ></div>
                 </div>
                 <p className="text-xs text-gray-500 mt-1">
