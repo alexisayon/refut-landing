@@ -3,6 +3,7 @@ import Head from 'next/head'
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import type { FormData } from '../types'
+import Logo from '../components/Logo'
 
 const Home: NextPage = () => {
   const [formData, setFormData] = useState<FormData>({
@@ -147,7 +148,7 @@ const Home: NextPage = () => {
             <div className="flex justify-between items-center h-16">
               <div className="flex items-center">
                 <div className="flex-shrink-0">
-                  <h1 className="text-2xl font-bold text-green-600">ReFut</h1>
+                  <Logo variant="default" size="md" />
                 </div>
               </div>
               <div className="hidden md:block">
@@ -967,7 +968,9 @@ const Footer = () => {
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="col-span-1 md:col-span-2">
-            <h3 className="text-2xl font-bold text-green-400 mb-4">ReFut</h3>
+            <div className="mb-4">
+              <Logo variant="white" size="md" />
+            </div>
             <p className="text-gray-300 mb-6 max-w-md">
               Construyendo la comunidad del fútbol amateur en México. 
               Tu voz, tu experiencia, tu comunidad.
