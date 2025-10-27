@@ -60,6 +60,7 @@ export default function TestFirebase() {
       setTestResults([...results])
       
     } catch (error) {
+      // Manejo seguro de errores con verificación de tipo
       const errorMessage = error instanceof Error ? error.message : 'Error desconocido'
       results.push(`❌ Error en las pruebas: ${errorMessage}`)
       setTestResults([...results])
