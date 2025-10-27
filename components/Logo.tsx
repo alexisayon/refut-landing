@@ -2,7 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 
 interface LogoProps {
-  variant?: 'default' | 'white' | 'dark'
+  variant?: 'default' | 'white' | 'dark' | 'footer'
   size?: 'sm' | 'md' | 'lg'
   className?: string
   href?: string
@@ -23,7 +23,8 @@ export const Logo = ({
   const logoPath = {
     default: '/logo/logorefut.svg',      // Logo principal (isologo)
     white: '/logo/logorefut2.svg',       // Logo para fondos oscuros
-    dark: '/logo/logorefut.svg'          // Logo para fondos claros
+    dark: '/logo/logorefut.svg',          // Logo para fondos claros
+    footer: '/logo/logorefut3.svg'       // Logo para footer (mejor contraste)
   }
 
   const LogoImage = () => (
