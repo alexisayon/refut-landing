@@ -87,9 +87,10 @@ const Home: NextPage = () => {
   }
 
   const toggleProblema = (problema: string) => {
-    const currentProblems = formData.problemasPrincipales as string[]
+    // TypeScript fix: explicitly cast to string array
+    const currentProblems: string[] = formData.problemasPrincipales as string[]
     const nuevosProblemas: string[] = currentProblems.includes(problema)
-      ? currentProblems.filter(p => p !== problema)
+      ? currentProblems.filter((p: string) => p !== problema)
       : [...currentProblems, problema]
     setFormData({...formData, problemasPrincipales: nuevosProblemas})
   }
