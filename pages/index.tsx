@@ -4,6 +4,8 @@ import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import type { FormData } from '../types'
 import Logo from '../components/Logo'
+import { PrivacyNotice } from '../components/PrivacyNotice'
+import { FormValidator, AntiSpam } from '../lib/formValidator'
 
 const Home: NextPage = () => {
   const [formData, setFormData] = useState<FormData>({
@@ -21,6 +23,13 @@ const Home: NextPage = () => {
   const [faqOpen, setFaqOpen] = useState<number | null>(null)
   const [selectedProblems, setSelectedProblems] = useState<string[]>([])
   const [additionalComment, setAdditionalComment] = useState('')
+  
+  // Estados para seguridad y privacidad
+  const [privacyAccepted, setPrivacyAccepted] = useState(false)
+  const [termsAccepted, setTermsAccepted] = useState(false)
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({})
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [honeypot, setHoneypot] = useState('')
 
   const problemasPrincipales = [
     'Dificultad para encontrar canchas disponibles',
@@ -58,21 +67,56 @@ const Home: NextPage = () => {
     setUsuariosRegistrados(obtenerUsuariosRegistrados())
   }, [])
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setIsSubmitting(true)
+    setFormErrors({})
     
-    // Guardar datos en localStorage
+    try {
+      // 1. Verificar honeypot (anti-spam)
+      if (!AntiSpam.checkHoneypot(honeypot)) {
+        setFormErrors({ general: 'Detección de spam. Intenta nuevamente.' })
+        return
+      }
+      
+      // 2. Verificar límites de envío (anti-spam)
+      const rateLimitCheck = AntiSpam.checkRateLimit()
+      if (!rateLimitCheck.allowed) {
+        setFormErrors({ general: rateLimitCheck.error! })
+        return
+      }
+      
+      // 3. Validar términos y privacidad
+      if (!privacyAccepted || !termsAccepted) {
+        setFormErrors({ terms: 'Debes aceptar los términos y condiciones y el aviso de privacidad' })
+        return
+      }
+      
+      // 4. Sanitizar y validar datos del formulario
+      const sanitizedData = FormValidator.sanitizeFormData(formData)
+      const validation = FormValidator.validateForm(sanitizedData)
+      
+      if (!validation.isValid) {
+        setFormErrors(validation.errors)
+        return
+      }
+      
+      // 5. Guardar datos en localStorage (temporal)
     const formDataKey = `refut_early_access_${Date.now()}`
     const formDataWithTimestamp = {
-      ...formData,
-      timestamp: new Date().toISOString(),
+        ...sanitizedData,
       id: formDataKey,
-      source: 'landing_page',
-      selectedProblems: selectedProblems,
-      additionalComment: additionalComment
+        source: 'landing_page',
+        selectedProblems: selectedProblems,
+        additionalComment: additionalComment,
+        privacyAccepted: true,
+        termsAccepted: true,
+        userAgent: typeof window !== 'undefined' ? window.navigator.userAgent : '',
+        timestamp: new Date().toISOString()
     }
     
     // Guardar registro individual
+      if (typeof window !== 'undefined') {
     localStorage.setItem(formDataKey, JSON.stringify(formDataWithTimestamp))
     
     // Guardar en lista de registros
@@ -82,12 +126,17 @@ const Home: NextPage = () => {
     
     console.log('📊 Datos guardados:', {
       individual: formDataWithTimestamp,
-      totalRegistros: existingData.length
-    })
-    
-    // Actualizar contador de usuarios registrados
-    setUsuariosRegistrados(existingData.length)
-    
+          totalRegistros: existingData.length
+        })
+        
+        // Actualizar contador de usuarios registrados
+        setUsuariosRegistrados(existingData.length)
+        
+        // Registrar envío para límites
+        AntiSpam.recordSubmission()
+      }
+      
+      // 6. Marcar como enviado
     setFormularioEnviado(true)
     setTimeout(() => {
       setFormularioEnviado(false)
@@ -101,9 +150,19 @@ const Home: NextPage = () => {
         otrasProblematicas: '',
         interesEarlyAccess: false
       })
-      setSelectedProblems([])
-      setAdditionalComment('')
+        setSelectedProblems([])
+        setAdditionalComment('')
+        setPrivacyAccepted(false)
+        setTermsAccepted(false)
+        setHoneypot('')
     }, 3000)
+      
+    } catch (error) {
+      console.error('Error al enviar formulario:', error)
+      setFormErrors({ general: 'Error al enviar el formulario. Intenta nuevamente.' })
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const toggleProblema = (problema: string) => {
@@ -157,12 +216,12 @@ const Home: NextPage = () => {
                   <a href="#problemas" className="text-gray-700 hover:text-green-600 px-3 py-2 rounded-md text-sm font-medium">Problemas</a>
                   <a href="#estado" className="text-gray-700 hover:text-green-600 px-3 py-2 rounded-md text-sm font-medium">Estado</a>
                   <a href="#faq" className="text-gray-700 hover:text-green-600 px-3 py-2 rounded-md text-sm font-medium">FAQ</a>
-                  <button
-                    onClick={() => setMostrarFormulario(true)}
-                    className="bg-green-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-green-700 transition-colors"
-                  >
+                <button 
+                  onClick={() => setMostrarFormulario(true)}
+                  className="bg-green-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-green-700 transition-colors"
+                >
                     Únete a la Beta
-                  </button>
+                </button>
                 </div>
               </div>
             </div>
@@ -207,6 +266,14 @@ const Home: NextPage = () => {
           problemasPrincipales={problemasPrincipales}
           toggleProblema={toggleProblema}
           handleSubmit={handleSubmit}
+          privacyAccepted={privacyAccepted}
+          setPrivacyAccepted={setPrivacyAccepted}
+          termsAccepted={termsAccepted}
+          setTermsAccepted={setTermsAccepted}
+          formErrors={formErrors}
+          isSubmitting={isSubmitting}
+          honeypot={honeypot}
+          setHoneypot={setHoneypot}
         />
 
         {/* FAQ Section */}
@@ -228,13 +295,13 @@ const Home: NextPage = () => {
 const HeroSection = ({ usuariosRegistrados, onShowForm }: { usuariosRegistrados: number, onShowForm: () => void }) => {
   return (
     <section className="relative bg-gradient-to-br from-green-50 to-blue-50 py-20 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto text-center">
+          <div className="max-w-7xl mx-auto text-center">
         {/* Título Principal */}
         <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6 animate-fadeIn">
           Construyamos Juntos la{' '}
           <span className="text-green-600">Comunidad del Fútbol Amateur</span>{' '}
           en México
-        </h1>
+            </h1>
         
         {/* Subtítulo */}
         <h2 className="text-xl md:text-2xl text-gray-600 mb-8 max-w-4xl mx-auto font-light">
@@ -253,13 +320,13 @@ const HeroSection = ({ usuariosRegistrados, onShowForm }: { usuariosRegistrados:
 
         {/* Banner de Validación */}
         <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 mb-8 max-w-2xl mx-auto">
-          <div className="flex items-center">
-            <div className="flex-shrink-0">
+              <div className="flex items-center">
+                <div className="flex-shrink-0">
               <svg className="h-5 w-5 text-orange-400" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-              </svg>
-            </div>
-            <div className="ml-3">
+                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <div className="ml-3">
               <p className="text-sm text-orange-800">
                 <strong>🔍 Fase de Validación:</strong> Estamos buscando los primeros usuarios para construir ReFut junto a ellos. 
                 Tu opinión y experiencia son fundamentales para crear la solución ideal.
@@ -269,38 +336,58 @@ const HeroSection = ({ usuariosRegistrados, onShowForm }: { usuariosRegistrados:
         </div>
         
         {/* Contador de Usuarios Registrados */}
-        <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-8 max-w-md mx-auto">
-          <div className="flex items-center justify-center">
-            <div className="flex-shrink-0">
-              <svg className="h-5 w-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <div className="ml-3">
-              <p className="text-sm text-green-800">
-                <strong>👥 {usuariosRegistrados} personas</strong> ya se unieron a nuestra comunidad beta
-              </p>
+        {usuariosRegistrados > 0 && (
+          <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-8 max-w-md mx-auto">
+            <div className="flex items-center justify-center">
+              <div className="flex-shrink-0">
+                <svg className="h-5 w-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <div className="ml-3">
+                <p className="text-sm text-green-800">
+                  <strong>👥 {usuariosRegistrados} personas</strong> ya se unieron a nuestra comunidad beta
+                  </p>
+                </div>
             </div>
           </div>
-        </div>
+        )}
+        
+        {/* Mensaje motivador cuando no hay usuarios */}
+        {usuariosRegistrados === 0 && (
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-8 max-w-md mx-auto">
+            <div className="flex items-center justify-center">
+              <div className="flex-shrink-0">
+                <svg className="h-5 w-5 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <div className="ml-3">
+                <p className="text-sm text-blue-800">
+                  <strong>🚀 Sé el primero</strong> en unirte a la comunidad que está construyendo el futuro del fútbol amateur
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
         
         {/* CTA Buttons */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <button 
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <button 
             onClick={onShowForm}
             className="bg-green-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-green-700 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1"
-          >
+              >
             🚀 Únete a la Beta Gratuita
-          </button>
+              </button>
           <a 
             href="#problemas"
             className="bg-white text-green-600 px-8 py-4 rounded-lg text-lg font-semibold border-2 border-green-600 hover:bg-green-50 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1"
           >
             📋 Cuéntanos tus Problemas
           </a>
-        </div>
-      </div>
-    </section>
+            </div>
+          </div>
+        </section>
   )
 }
 
@@ -309,50 +396,50 @@ const PurposeSection = () => {
   return (
     <section id="proposito" className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
       <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-16">
+            <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
             Estamos Construyendo la Plataforma Contigo
-          </h2>
+              </h2>
           <p className="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
             ReFut nació de nuestra propia frustración como jugadores de fútbol amateur. 
             Sabemos que existen problemas reales, pero queremos entender exactamente cuáles son los tuyos 
             para construir la solución perfecta.
-          </p>
-        </div>
-
+              </p>
+            </div>
+            
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="text-center p-6">
+              <div className="text-center p-6">
             <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
               <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-              </svg>
-            </div>
+                  </svg>
+                </div>
             <h3 className="text-xl font-semibold text-gray-900 mb-3">Identificamos Problemas Reales</h3>
-            <p className="text-gray-600">
+                <p className="text-gray-600">
               Queremos conocer los dolores específicos que enfrentas como jugador, organizador o dueño de cancha.
-            </p>
-          </div>
-
-          <div className="text-center p-6">
+                </p>
+              </div>
+              
+              <div className="text-center p-6">
             <div className="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
               <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4" />
-              </svg>
-            </div>
+                  </svg>
+                </div>
             <h3 className="text-xl font-semibold text-gray-900 mb-3">Cocreación Activa</h3>
-            <p className="text-gray-600">
+                <p className="text-gray-600">
               Tu feedback directo influye en cada decisión de diseño y funcionalidad de ReFut.
-            </p>
-          </div>
-
-          <div className="text-center p-6">
+                </p>
+              </div>
+              
+              <div className="text-center p-6">
             <div className="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-              </svg>
-            </div>
+                  </svg>
+                </div>
             <h3 className="text-xl font-semibold text-gray-900 mb-3">Comunidad Primero</h3>
-            <p className="text-gray-600">
+                <p className="text-gray-600">
               Construimos una comunidad real de personas apasionadas por el fútbol amateur en México.
             </p>
           </div>
@@ -381,8 +468,8 @@ const ProblemsChecklist = ({
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
             Selecciona los problemas que más te afectan. Esta información es crucial para construir 
             la solución que realmente necesitas.
-          </p>
-        </div>
+                </p>
+              </div>
 
         <div className="bg-white rounded-2xl shadow-lg p-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
@@ -409,7 +496,7 @@ const ProblemsChecklist = ({
                   </label>
                 ))}
               </div>
-            </div>
+                </div>
 
             {/* Problemas de Organizadores */}
             <div>
@@ -462,9 +549,9 @@ const ProblemsChecklist = ({
               </p>
             </div>
           )}
-        </div>
-      </div>
-    </section>
+            </div>
+          </div>
+        </section>
   )
 }
 
@@ -495,7 +582,7 @@ const ProjectStatus = () => {
     {
       phase: "Beta Privada",
       status: "Próximamente",
-      description: "Pruebas con usuarios reales en Enero 2025",
+      description: "Pruebas con usuarios reales en Enero 2026",
       progress: 0,
       color: "orange"
     }
@@ -504,15 +591,15 @@ const ProjectStatus = () => {
   return (
     <section id="estado" className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
       <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-16">
+            <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
             Estado del Proyecto
-          </h2>
+              </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
             Transparencia total sobre nuestro progreso. Te mantenemos informado de cada paso.
-          </p>
-        </div>
-
+              </p>
+            </div>
+            
         <div className="space-y-8">
           {statusItems.map((item, index) => (
             <div key={index} className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
@@ -545,11 +632,11 @@ const ProjectStatus = () => {
                 ></div>
               </div>
               <p className="text-sm text-gray-500 mt-2">{item.progress}% completado</p>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-      </div>
-    </section>
+          </div>
+        </section>
   )
 }
 
@@ -623,7 +710,7 @@ const HonestTestimonials = () => {
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
             Pronto Compartiremos Historias Reales
-          </h2>
+            </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
             Estamos construyendo relaciones auténticas con nuestra comunidad. 
             Las historias reales llegarán cuando tengamos usuarios usando ReFut.
@@ -647,9 +734,9 @@ const HonestTestimonials = () => {
               </p>
             </div>
           </div>
-        </div>
-      </div>
-    </section>
+            </div>
+          </div>
+        </section>
   )
 }
 
@@ -675,7 +762,7 @@ const CocreationCall = () => {
             <div className="text-center">
               <div className="text-3xl font-bold text-green-200 mb-2">Tu Experiencia</div>
               <div className="text-sm opacity-90">Moldea el Producto</div>
-            </div>
+              </div>
             <div className="text-center">
               <div className="text-3xl font-bold text-green-200 mb-2">Tu Comunidad</div>
               <div className="text-sm opacity-90">Crece Contigo</div>
@@ -685,13 +772,13 @@ const CocreationCall = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button className="bg-white text-green-600 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-100 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1">
               🚀 Únete Ahora
-            </button>
+                  </button>
             <a href="#problemas" className="bg-white/20 text-white px-8 py-4 rounded-lg text-lg font-semibold border border-white/30 hover:bg-white/30 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1">
               📋 Cuéntanos tus Problemas
             </a>
-          </div>
-        </div>
-      </div>
+                    </div>
+                    </div>
+                  </div>
     </section>
   )
 }
@@ -705,7 +792,15 @@ const EarlyAccessForm = ({
   formularioEnviado, 
   problemasPrincipales, 
   toggleProblema, 
-  handleSubmit 
+  handleSubmit,
+  privacyAccepted,
+  setPrivacyAccepted,
+  termsAccepted,
+  setTermsAccepted,
+  formErrors,
+  isSubmitting,
+  honeypot,
+  setHoneypot
 }: any) => {
   return (
     <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-green-50 to-blue-50">
@@ -723,90 +818,171 @@ const EarlyAccessForm = ({
               Acceso Beta Gratuito
             </h3>
             <p className="text-gray-600">
-              Beta privada disponible en <strong>Enero 2025</strong>
-            </p>
-          </div>
+              Beta privada disponible en <strong>Enero 2026</strong>
+                      </p>
+                    </div>
+
+          {/* Aviso de Privacidad */}
+          <PrivacyNotice 
+            onAccept={() => setPrivacyAccepted(true)}
+            onDecline={() => setPrivacyAccepted(false)}
+          />
+
+          {/* Errores generales */}
+          {formErrors.general && (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+              <div className="flex items-center">
+                <svg className="h-5 w-5 text-red-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                </svg>
+                <p className="text-sm text-red-800">{formErrors.general}</p>
+              </div>
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <input
-                type="text"
-                placeholder="Tu nombre completo"
-                value={formData.nombre}
-                onChange={(e) => setFormData({...formData, nombre: e.target.value})}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                required
-              />
-              <input
-                type="email"
-                placeholder="Tu email"
-                value={formData.email}
-                onChange={(e) => setFormData({...formData, email: e.target.value})}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                required
-              />
-            </div>
+            {/* Honeypot (campo oculto anti-spam) */}
+            <input
+              type="text"
+              name="website"
+              value={honeypot}
+              onChange={(e) => setHoneypot(e.target.value)}
+              style={{ display: 'none' }}
+              tabIndex={-1}
+              autoComplete="off"
+            />
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <input
-                type="text"
-                placeholder="Tu ubicación (ciudad, estado)"
-                value={formData.ubicacion}
-                onChange={(e) => setFormData({...formData, ubicacion: e.target.value})}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                required
-              />
-              <select
-                value={formData.nivelJuego}
-                onChange={(e) => setFormData({...formData, nivelJuego: e.target.value})}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                required
-              >
-                <option value="">Selecciona tu nivel</option>
-                <option value="Principiante">Principiante</option>
-                <option value="Intermedio">Intermedio</option>
-                <option value="Avanzado">Avanzado</option>
-                <option value="Experto">Experto</option>
-              </select>
-            </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <input
+                          type="text"
+                  placeholder="Tu nombre completo"
+                          value={formData.nombre}
+                          onChange={(e) => setFormData({...formData, nombre: e.target.value})}
+                  className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent ${
+                    formErrors.nombre ? 'border-red-300 bg-red-50' : 'border-gray-300'
+                  }`}
+                          required
+                  maxLength={50}
+                        />
+                {formErrors.nombre && (
+                  <p className="text-red-500 text-xs mt-1">{formErrors.nombre}</p>
+                )}
+                      </div>
+              
+                      <div>
+                        <input
+                          type="email"
+                  placeholder="Tu email"
+                          value={formData.email}
+                          onChange={(e) => setFormData({...formData, email: e.target.value})}
+                  className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent ${
+                    formErrors.email ? 'border-red-300 bg-red-50' : 'border-gray-300'
+                  }`}
+                          required
+                  maxLength={254}
+                />
+                {formErrors.email && (
+                  <p className="text-red-500 text-xs mt-1">{formErrors.email}</p>
+                )}
+                      </div>
+                    </div>
 
-            <div>
+                    <div>
               <label className="block text-sm font-medium text-gray-700 mb-3 text-left">
                 ¿Cuál es tu mayor reto en el fútbol amateur? (Campo obligatorio)
-              </label>
+                      </label>
               <textarea
-                value={formData.otrasProblematicas}
-                onChange={(e) => setFormData({...formData, otrasProblematicas: e.target.value})}
+                value={formData.mayorReto}
+                onChange={(e) => setFormData({...formData, mayorReto: e.target.value})}
                 placeholder="Describe el problema más importante que enfrentas al jugar fútbol amateur..."
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent h-24 resize-none"
+                className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent h-24 resize-none ${
+                  formErrors.mayorReto ? 'border-red-300 bg-red-50' : 'border-gray-300'
+                }`}
                 rows={3}
                 required
+                maxLength={500}
               />
               <p className="text-xs text-gray-500 mt-2 text-left">
                 Esta información es crucial para construir la solución que necesitas
               </p>
+              {formErrors.mayorReto && (
+                <p className="text-red-500 text-xs mt-1">{formErrors.mayorReto}</p>
+              )}
             </div>
 
-            <div className="flex items-center justify-center">
-              <label className="flex items-center">
-                <input
-                  type="checkbox"
-                  checked={formData.interesEarlyAccess}
-                  onChange={(e) => setFormData({...formData, interesEarlyAccess: e.target.checked})}
-                  className="mr-3 h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
+            {/* Checkbox de términos y condiciones */}
+            <div className="space-y-3">
+              <div className="flex items-start">
+                            <input
+                              type="checkbox"
+                  id="terms"
+                  checked={termsAccepted}
+                  onChange={(e) => setTermsAccepted(e.target.checked)}
+                  className="mt-1 h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
+                  required
                 />
-                <span className="text-sm text-gray-700">
+                <label htmlFor="terms" className="ml-3 text-sm text-gray-700">
+                  Acepto los{' '}
+                  <button
+                    type="button"
+                    className="text-green-600 hover:text-green-800 underline"
+                    onClick={() => setPrivacyAccepted(true)}
+                  >
+                    términos y condiciones
+                  </button>
+                  {' '}y el{' '}
+                  <button
+                    type="button"
+                    className="text-green-600 hover:text-green-800 underline"
+                    onClick={() => setPrivacyAccepted(true)}
+                  >
+                    aviso de privacidad
+                  </button>
+                          </label>
+                    </div>
+
+              <div className="flex items-start">
+                      <input
+                        type="checkbox"
+                  id="updates"
+                        checked={formData.interesEarlyAccess}
+                        onChange={(e) => setFormData({...formData, interesEarlyAccess: e.target.checked})}
+                  className="mt-1 h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
+                />
+                <label htmlFor="updates" className="ml-3 text-sm text-gray-700">
                   Quiero recibir actualizaciones sobre el desarrollo y acceso prioritario
-                </span>
-              </label>
+                </label>
+                    </div>
+
+              {formErrors.terms && (
+                <p className="text-red-500 text-xs">{formErrors.terms}</p>
+              )}
             </div>
 
-            <button
+                      <button
               type="submit"
-              className="w-full bg-green-600 text-white py-4 px-8 rounded-lg text-lg font-semibold hover:bg-green-700 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+              disabled={isSubmitting}
+              className={`w-full py-4 px-8 rounded-lg text-lg font-semibold transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1 ${
+                isSubmitting 
+                  ? 'bg-gray-400 cursor-not-allowed' 
+                  : 'bg-green-600 hover:bg-green-700 text-white'
+              }`}
             >
-              {formularioEnviado ? '✅ ¡Te Uniste a la Beta!' : '🚀 Unirme a la Beta'}
-            </button>
+              {isSubmitting ? (
+                <span className="flex items-center justify-center">
+                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Enviando...
+                </span>
+              ) : formularioEnviado ? (
+                '✅ ¡Te Uniste a la Beta!'
+              ) : (
+                '🚀 Unirme a la Beta'
+              )}
+                      </button>
           </form>
 
           <div className="mt-6 text-sm text-gray-500">
@@ -825,7 +1001,7 @@ const FAQSection = ({ faqOpen, toggleFaq }: { faqOpen: number | null, toggleFaq:
   const faqs = [
     {
       question: "¿Cuándo estará disponible ReFut?",
-      answer: "ReFut estará disponible en su versión beta privada en Enero 2025. Los usuarios registrados en acceso temprano serán los primeros en probar la aplicación."
+      answer: "ReFut estará disponible en su versión beta privada en Enero 2026. Los usuarios registrados en acceso temprano serán los primeros en probar la aplicación."
     },
     {
       question: "¿Es gratis usar ReFut?",
@@ -860,7 +1036,7 @@ const FAQSection = ({ faqOpen, toggleFaq }: { faqOpen: number | null, toggleFaq:
         <div className="space-y-4">
           {faqs.map((faq, index) => (
             <div key={index} className="bg-white rounded-lg shadow-sm border border-gray-200">
-              <button
+                      <button
                 onClick={() => toggleFaq(index)}
                 className="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50 transition-colors"
               >
@@ -873,13 +1049,13 @@ const FAQSection = ({ faqOpen, toggleFaq }: { faqOpen: number | null, toggleFaq:
                 >
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
-              </button>
+                      </button>
               {faqOpen === index && (
                 <div className="px-6 pb-4">
                   <p className="text-gray-600 leading-relaxed">{faq.answer}</p>
-                </div>
-              )}
-            </div>
+                    </div>
+                )}
+              </div>
           ))}
         </div>
       </div>
