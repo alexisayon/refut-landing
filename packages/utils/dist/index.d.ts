@@ -1,0 +1,15 @@
+export declare const formatDate: (date: Date | string) => string;
+export declare const formatDateTime: (date: Date | string) => string;
+export declare const getRelativeTime: (date: Date | string) => string;
+export declare const capitalize: (str: string) => string;
+export declare const truncate: (str: string, length: number) => string;
+export declare const formatNumber: (num: number) => string;
+export declare const formatPercentage: (num: number, decimals?: number) => string;
+export declare const calculatePercentage: (value: number, total: number) => number;
+export declare const isValidEmail: (email: string) => boolean;
+export declare const isValidPassword: (password: string) => boolean;
+export declare const groupBy: <T>(array: T[], key: keyof T) => Record<string, T[]>;
+export declare const sortBy: <T>(array: T[], key: keyof T, direction?: "asc" | "desc") => T[];
+export declare const getFromStorage: <T>(key: string, defaultValue: T) => T;
+export declare const setToStorage: <T>(key: string, value: T) => void;
+export declare const removeFromStorage: (key: string) => void;
