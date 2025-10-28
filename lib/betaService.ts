@@ -154,6 +154,7 @@ export class BetaService {
     levelStats: Record<string, number>
     earlyAccessInterest: number
     recentRegistrations: number
+    mayorRetoStats: Record<string, number>
   }> {
     try {
       const [publicStats, feedbackStats, allRegistrations] = await Promise.all([
@@ -164,6 +165,7 @@ export class BetaService {
 
       const locationStats: Record<string, number> = {}
       const levelStats: Record<string, number> = {}
+      const mayorRetoStats: Record<string, number> = {}
       let earlyAccessInterest = 0
       const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000)
 
@@ -173,6 +175,13 @@ export class BetaService {
         
         // Estadísticas de nivel
         levelStats[reg.nivelJuego] = (levelStats[reg.nivelJuego] || 0) + 1
+        
+        // Estadísticas de mayor reto
+        if (reg.mayorReto && reg.mayorReto.trim() !== '') {
+          // Normalizar el texto para agrupar respuestas similares
+          const retoNormalizado = reg.mayorReto.trim().toLowerCase()
+          mayorRetoStats[retoNormalizado] = (mayorRetoStats[retoNormalizado] || 0) + 1
+        }
         
         // Interés en early access
         if (reg.interesEarlyAccess) earlyAccessInterest++
@@ -188,7 +197,8 @@ export class BetaService {
         locationStats,
         levelStats,
         earlyAccessInterest,
-        recentRegistrations
+        recentRegistrations,
+        mayorRetoStats
       }
     } catch (error) {
       console.error('❌ Error obteniendo estadísticas detalladas:', error)
@@ -198,7 +208,8 @@ export class BetaService {
         locationStats: {},
         levelStats: {},
         earlyAccessInterest: 0,
-        recentRegistrations: 0
+        recentRegistrations: 0,
+        mayorRetoStats: {}
       }
     }
   }

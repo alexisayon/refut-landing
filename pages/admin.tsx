@@ -10,6 +10,7 @@ interface AdminStats {
   levelStats: Record<string, number>
   earlyAccessInterest: number
   recentRegistrations: number
+  mayorRetoStats: Record<string, number>
   allRegistrations: BetaRegistration[]
 }
 
@@ -22,6 +23,7 @@ export default function Admin() {
     levelStats: {},
     earlyAccessInterest: 0,
     recentRegistrations: 0,
+    mayorRetoStats: {},
     allRegistrations: []
   })
   const [loading, setLoading] = useState(true)
@@ -71,6 +73,7 @@ export default function Admin() {
       problemCounts: stats.problemCounts,
       locationStats: stats.locationStats,
       levelStats: stats.levelStats,
+      mayorRetoStats: stats.mayorRetoStats,
       registrations: stats.allRegistrations.map(reg => ({
         id: reg.id,
         nombre: reg.nombre,
@@ -144,7 +147,7 @@ export default function Admin() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="text-red-600 text-xl mb-4">❌ Error</div>
+          <div className="text-red-600 text-xl mb-4">Error</div>
           <p className="text-gray-600 mb-4">{error}</p>
           <button 
             onClick={loadData}
@@ -162,19 +165,19 @@ export default function Admin() {
       <div className="max-w-6xl mx-auto px-4">
         <div className="bg-white rounded-lg shadow-lg p-6">
           <div className="flex justify-between items-center mb-6">
-            <h1 className="text-3xl font-bold text-gray-900">📊 ReFut - Panel de Administración</h1>
+            <h1 className="text-3xl font-bold text-gray-900">ReFut - Panel de Administración</h1>
             <div className="flex space-x-3">
               <button
                 onClick={exportData}
                 className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
               >
-                📥 Exportar Datos
+                Exportar Datos
               </button>
               <button
                 onClick={logout}
                 className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
               >
-                🚪 Cerrar Sesión
+                Cerrar Sesión
               </button>
             </div>
           </div>
@@ -182,13 +185,13 @@ export default function Admin() {
           {/* Estadísticas Generales */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             <div className="bg-blue-50 p-6 rounded-lg">
-              <h3 className="text-lg font-semibold text-blue-900 mb-2">👥 Total de Usuarios</h3>
+              <h3 className="text-lg font-semibold text-blue-900 mb-2">Total de Usuarios</h3>
               <p className="text-3xl font-bold text-blue-600">{stats.totalUsers}</p>
               <p className="text-sm text-blue-700 mt-1">Registros en early access</p>
             </div>
 
             <div className="bg-green-50 p-6 rounded-lg">
-              <h3 className="text-lg font-semibold text-green-900 mb-2">🎯 Interés Early Access</h3>
+              <h3 className="text-lg font-semibold text-green-900 mb-2">Interés Early Access</h3>
               <p className="text-3xl font-bold text-green-600">{stats.earlyAccessInterest}</p>
               <p className="text-sm text-green-700 mt-1">
                 {stats.totalUsers > 0 ? Math.round((stats.earlyAccessInterest / stats.totalUsers) * 100) : 0}% del total
@@ -196,13 +199,13 @@ export default function Admin() {
             </div>
 
             <div className="bg-purple-50 p-6 rounded-lg">
-              <h3 className="text-lg font-semibold text-purple-900 mb-2">📈 Registros Recientes</h3>
+              <h3 className="text-lg font-semibold text-purple-900 mb-2">Registros Recientes</h3>
               <p className="text-3xl font-bold text-purple-600">{stats.recentRegistrations}</p>
               <p className="text-sm text-purple-700 mt-1">Últimas 24 horas</p>
             </div>
 
             <div className="bg-orange-50 p-6 rounded-lg">
-              <h3 className="text-lg font-semibold text-orange-900 mb-2">🔥 Problemas Identificados</h3>
+              <h3 className="text-lg font-semibold text-orange-900 mb-2">Problemas Identificados</h3>
               <p className="text-3xl font-bold text-orange-600">{Object.keys(stats.problemCounts).length}</p>
               <p className="text-sm text-orange-700 mt-1">Categorías diferentes</p>
             </div>
@@ -210,7 +213,7 @@ export default function Admin() {
 
           {/* Problemas Más Comunes */}
           <div className="mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">🔥 Problemas Más Comunes</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Problemas Más Comunes</h2>
             <div className="bg-gray-50 rounded-lg p-6">
               {Object.keys(stats.problemCounts).length === 0 ? (
                 <p className="text-gray-500 text-center py-4">No hay datos de feedback disponibles</p>
@@ -242,7 +245,7 @@ export default function Admin() {
 
           {/* Estadísticas de Ubicación */}
           <div className="mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">📍 Distribución por Ubicación</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Distribución por Ubicación</h2>
             <div className="bg-gray-50 rounded-lg p-6">
               {Object.keys(stats.locationStats).length === 0 ? (
                 <p className="text-gray-500 text-center py-4">No hay datos de ubicación disponibles</p>
@@ -292,9 +295,52 @@ export default function Admin() {
             </div>
           </div>
 
+          {/* Estadísticas de Mayor Reto */}
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">🎯 Mayores Retos Identificados</h2>
+            <div className="bg-gray-50 rounded-lg p-6">
+              {Object.keys(stats.mayorRetoStats).length === 0 ? (
+                <p className="text-gray-500 text-center py-4">No hay datos de retos disponibles</p>
+              ) : (
+                <div className="space-y-4">
+                  {Object.entries(stats.mayorRetoStats)
+                    .sort(([,a], [,b]) => b - a)
+                    .slice(0, 10) // Mostrar solo los 10 más comunes
+                    .map(([reto, count]) => (
+                      <div key={reto} className="bg-white p-4 rounded-lg shadow-sm">
+                        <div className="flex justify-between items-start">
+                          <div className="flex-1">
+                            <p className="text-gray-800 font-medium mb-1 capitalize">
+                              {reto.length > 100 ? `${reto.substring(0, 100)}...` : reto}
+                            </p>
+                            {reto.length > 100 && (
+                              <p className="text-xs text-gray-500 mt-1">
+                                Texto completo: {reto}
+                              </p>
+                            )}
+                          </div>
+                          <div className="flex items-center space-x-2 ml-4">
+                            <div className="w-32 bg-gray-200 rounded-full h-2">
+                              <div 
+                                className="bg-purple-600 h-2 rounded-full" 
+                                style={{ 
+                                  width: `${(count / Math.max(...Object.values(stats.mayorRetoStats))) * 100}%` 
+                                }}
+                              ></div>
+                            </div>
+                            <span className="text-sm font-semibold text-gray-600 w-8 text-right">{count}</span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              )}
+            </div>
+          </div>
+
           {/* Tabla de Registros Recientes */}
           <div className="mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">📋 Registros Recientes</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Registros Recientes</h2>
             <div className="bg-white rounded-lg shadow overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
@@ -350,7 +396,7 @@ export default function Admin() {
 
           {/* Información de Seguridad */}
           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-            <h3 className="text-lg font-semibold text-yellow-800 mb-2">🔒 Información de Seguridad</h3>
+            <h3 className="text-lg font-semibold text-yellow-800 mb-2">Información de Seguridad</h3>
             <ul className="text-sm text-yellow-700 space-y-1">
               <li>• Los datos están encriptados en Firebase</li>
               <li>• Acceso restringido al equipo autorizado</li>
@@ -365,13 +411,13 @@ export default function Admin() {
               onClick={loadData}
               className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
             >
-              🔄 Actualizar Datos
+              Actualizar Datos
             </button>
             <a
               href="/"
               className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700"
             >
-              🏠 Volver al Inicio
+              Volver al Inicio
             </a>
           </div>
         </div>
