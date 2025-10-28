@@ -35,7 +35,7 @@ const Terminos = () => {
 
             <div className="prose prose-lg max-w-none">
               <p className="text-gray-600 mb-6">
-                <strong>Última actualización:</strong> Enero 2025
+                <strong>Última actualización:</strong> Octubre 2025
               </p>
 
               <section className="mb-8">
@@ -105,7 +105,7 @@ const Terminos = () => {
                 </p>
                 <ul className="list-disc list-inside text-gray-700 space-y-2 ml-4">
                   <li>Usar el servicio para actividades ilegales</li>
-                  <li>Harassar, amenazar o intimidar a otros usuarios</li>
+                  <li>Acosar, amenazar o intimidar a otros usuarios</li>
                   <li>Intentar acceder a sistemas no autorizados</li>
                   <li>Distribuir malware o contenido malicioso</li>
                   <li>Violar derechos de propiedad intelectual</li>
@@ -164,7 +164,7 @@ const Terminos = () => {
                 </p>
                 <div className="mt-4 space-y-2">
                   <p className="text-gray-700">
-                    <strong>Email:</strong> refut@gmail.com
+                    <strong>Email:</strong> refutoficial@gmail.com
                   </p>
                   <p className="text-gray-700">
                     <strong>WhatsApp:</strong> +52 33 1047 5942

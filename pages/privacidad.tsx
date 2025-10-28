@@ -35,7 +35,7 @@ const Privacidad = () => {
 
             <div className="prose prose-lg max-w-none">
               <p className="text-gray-600 mb-6">
-                <strong>Última actualización:</strong> Enero 2025
+                <strong>Última actualización:</strong> Octubre 2025
               </p>
 
               <section className="mb-8">
@@ -223,7 +223,7 @@ const Privacidad = () => {
                 </p>
                 <div className="space-y-2">
                   <p className="text-gray-700">
-                    <strong>Email:</strong> refut@gmail.com
+                    <strong>Email:</strong> refutoficial@gmail.com
                   </p>
                   <p className="text-gray-700">
                     <strong>WhatsApp:</strong> +52 33 1047 5942
