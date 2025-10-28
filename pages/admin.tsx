@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { BetaService, BetaRegistration } from '../lib/betaService'
 import { Timestamp } from 'firebase/firestore'
+import { useAdminAuth } from '../hooks/useAdminAuth'
 
 interface AdminStats {
   totalUsers: number
@@ -13,6 +14,7 @@ interface AdminStats {
 }
 
 export default function Admin() {
+  const { isAuthenticated, isLoading: authLoading, logout } = useAdminAuth()
   const [stats, setStats] = useState<AdminStats>({
     totalUsers: 0,
     problemCounts: {},
@@ -26,8 +28,10 @@ export default function Admin() {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    loadData()
-  }, [])
+    if (isAuthenticated) {
+      loadData()
+    }
+  }, [isAuthenticated])
 
   const loadData = async () => {
     try {
@@ -95,6 +99,36 @@ export default function Admin() {
     URL.revokeObjectURL(url)
   }
 
+  // Mostrar loading mientras se verifica la autenticación
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Verificando acceso...</p>
+        </div>
+      </div>
+    )
+  }
+
+  // Redirigir al login si no está autenticado
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-red-600 text-xl mb-4">🔒 Acceso Denegado</div>
+          <p className="text-gray-600 mb-4">Necesitas autenticarte para acceder al panel de administración</p>
+          <a
+            href="/admin-login"
+            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          >
+            Ir al Login
+          </a>
+        </div>
+      </div>
+    )
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -129,12 +163,20 @@ export default function Admin() {
         <div className="bg-white rounded-lg shadow-lg p-6">
           <div className="flex justify-between items-center mb-6">
             <h1 className="text-3xl font-bold text-gray-900">📊 ReFut - Panel de Administración</h1>
-            <button
-              onClick={exportData}
-              className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-            >
-              📥 Exportar Datos
-            </button>
+            <div className="flex space-x-3">
+              <button
+                onClick={exportData}
+                className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+              >
+                📥 Exportar Datos
+              </button>
+              <button
+                onClick={logout}
+                className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+              >
+                🚪 Cerrar Sesión
+              </button>
+            </div>
           </div>
 
           {/* Estadísticas Generales */}
