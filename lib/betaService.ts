@@ -176,13 +176,6 @@ export class BetaService {
         
         // Interés en early access
         if (reg.interesEarlyAccess) earlyAccessInterest++
-        
-        // Procesar problemas para estadísticas detalladas
-        if (reg.problemasPrincipales && Array.isArray(reg.problemasPrincipales)) {
-          reg.problemasPrincipales.forEach(problem => {
-            problemCounts[problem] = (problemCounts[problem] || 0) + 1
-          })
-        }
       })
 
       const recentRegistrations = allRegistrations.filter(reg => 
