@@ -109,6 +109,87 @@ export class BetaService {
       return { problemCounts: {} }
     }
   }
+
+  // Obtener todos los registros (SOLO PARA ADMINISTRADORES)
+  static async getAllRegistrations(): Promise<BetaRegistration[]> {
+    try {
+      const q = query(
+        collection(db, this.COLLECTION_NAME),
+        orderBy('timestamp', 'desc')
+      )
+      const snapshot = await getDocs(q)
+      
+      const registrations: BetaRegistration[] = []
+      snapshot.forEach(doc => {
+        registrations.push({
+          id: doc.id,
+          ...doc.data()
+        } as BetaRegistration)
+      })
+
+      return registrations
+    } catch (error) {
+      console.error('❌ Error obteniendo registros:', error)
+      return []
+    }
+  }
+
+  // Obtener estadísticas detalladas
+  static async getDetailedStats(): Promise<{
+    totalUsers: number
+    problemCounts: Record<string, number>
+    locationStats: Record<string, number>
+    levelStats: Record<string, number>
+    earlyAccessInterest: number
+    recentRegistrations: number
+  }> {
+    try {
+      const [publicStats, feedbackStats, allRegistrations] = await Promise.all([
+        this.getPublicStats(),
+        this.getFeedbackStats(),
+        this.getAllRegistrations()
+      ])
+
+      const locationStats: Record<string, number> = {}
+      const levelStats: Record<string, number> = {}
+      let earlyAccessInterest = 0
+      const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000)
+
+      allRegistrations.forEach(reg => {
+        // Estadísticas de ubicación
+        locationStats[reg.ubicacion] = (locationStats[reg.ubicacion] || 0) + 1
+        
+        // Estadísticas de nivel
+        levelStats[reg.nivelJuego] = (levelStats[reg.nivelJuego] || 0) + 1
+        
+        // Interés en early access
+        if (reg.interesEarlyAccess) earlyAccessInterest++
+      })
+
+      const recentRegistrations = allRegistrations.filter(reg => 
+        reg.timestamp.toMillis() > oneDayAgo.getTime()
+      ).length
+
+      return {
+        totalUsers: publicStats.totalUsers,
+        problemCounts: feedbackStats.problemCounts,
+        locationStats,
+        levelStats,
+        earlyAccessInterest,
+        recentRegistrations
+      }
+    } catch (error) {
+      console.error('❌ Error obteniendo estadísticas detalladas:', error)
+      return {
+        totalUsers: 0,
+        problemCounts: {},
+        locationStats: {},
+        levelStats: {},
+        earlyAccessInterest: 0,
+        recentRegistrations: 0
+      }
+    }
+  }
 }
 
 // Servicio para migración de datos existentes
