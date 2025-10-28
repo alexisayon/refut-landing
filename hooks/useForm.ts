@@ -135,7 +135,7 @@ export const useForm = (): UseFormReturn => {
           email: (sanitizedData as any).email,
           ubicacion: (sanitizedData as any).ubicacion,
           nivelJuego: (sanitizedData as any).nivelJuego,
-          problemasPrincipales: (sanitizedData as any).problemasPrincipales,
+          problemasPrincipales: selectedProblems, // Usar selectedProblems en lugar de problemasPrincipales
           otrasProblematicas: (sanitizedData as any).otrasProblematicas,
           mayorReto: (sanitizedData as any).mayorReto,
           interesEarlyAccess: (sanitizedData as any).interesEarlyAccess,

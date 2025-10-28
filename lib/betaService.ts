@@ -91,16 +91,28 @@ export class BetaService {
   // Obtener feedback agregado (para análisis)
   static async getFeedbackStats(): Promise<{ problemCounts: Record<string, number> }> {
     try {
-      const q = query(collection(db, this.FEEDBACK_COLLECTION))
+      // Obtener problemas de los registros de beta en lugar de user_feedback
+      const q = query(collection(db, this.COLLECTION_NAME))
       const snapshot = await getDocs(q)
       
       const problemCounts: Record<string, number> = {}
       
       snapshot.forEach(doc => {
-        const data = doc.data() as UserFeedback
-        data.problems.forEach(problem => {
-          problemCounts[problem] = (problemCounts[problem] || 0) + 1
-        })
+        const data = doc.data() as BetaRegistration
+        
+        // Procesar problemasPrincipales
+        if (data.problemasPrincipales && Array.isArray(data.problemasPrincipales)) {
+          data.problemasPrincipales.forEach(problem => {
+            problemCounts[problem] = (problemCounts[problem] || 0) + 1
+          })
+        }
+        
+        // Procesar selectedProblems (por si acaso)
+        if (data.selectedProblems && Array.isArray(data.selectedProblems)) {
+          data.selectedProblems.forEach(problem => {
+            problemCounts[problem] = (problemCounts[problem] || 0) + 1
+          })
+        }
       })
 
       return { problemCounts }
@@ -164,6 +176,13 @@ export class BetaService {
         
         // Interés en early access
         if (reg.interesEarlyAccess) earlyAccessInterest++
+        
+        // Procesar problemas para estadísticas detalladas
+        if (reg.problemasPrincipales && Array.isArray(reg.problemasPrincipales)) {
+          reg.problemasPrincipales.forEach(problem => {
+            problemCounts[problem] = (problemCounts[problem] || 0) + 1
+          })
+        }
       })
 
       const recentRegistrations = allRegistrations.filter(reg => 
