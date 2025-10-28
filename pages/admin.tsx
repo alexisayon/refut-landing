@@ -276,7 +276,7 @@ export default function Admin() {
 
           {/* Estadísticas de Nivel de Juego */}
           <div className="mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">⚽ Nivel de Juego</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Nivel de Juego</h2>
             <div className="bg-gray-50 rounded-lg p-6">
               {Object.keys(stats.levelStats).length === 0 ? (
                 <p className="text-gray-500 text-center py-4">No hay datos de nivel disponibles</p>
@@ -297,7 +297,7 @@ export default function Admin() {
 
           {/* Estadísticas de Mayor Reto */}
           <div className="mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">🎯 Mayores Retos Identificados</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Mayores Retos Identificados</h2>
             <div className="bg-gray-50 rounded-lg p-6">
               {Object.keys(stats.mayorRetoStats).length === 0 ? (
                 <p className="text-gray-500 text-center py-4">No hay datos de retos disponibles</p>
