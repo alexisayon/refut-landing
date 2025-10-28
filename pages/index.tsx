@@ -1502,7 +1502,7 @@ const DirectContact = () => {
             <h3 className="text-xl font-semibold text-gray-900 mb-2">Email</h3>
             <p className="text-gray-600 mb-4">Escríbenos un correo detallado</p>
             <a 
-              href="mailto:refut@gmail.com" 
+              href="mailto:refutoficial@gmail.com" 
               className="inline-block bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors"
             >
               Enviar Email
@@ -1514,7 +1514,7 @@ const DirectContact = () => {
             <h3 className="text-xl font-semibold text-gray-900 mb-2">Instagram</h3>
             <p className="text-gray-600 mb-4">Síguenos para actualizaciones</p>
             <a 
-              href="https://instagram.com/refut.mx" 
+              href="https://instagram.com/refut_mx" 
               target="_blank" 
               rel="noopener noreferrer"
               className="inline-block bg-purple-500 text-white px-4 py-2 rounded-lg hover:bg-purple-600 transition-colors"
@@ -1565,22 +1565,22 @@ const Footer = () => {
               </a>
               
               {/* Instagram */}
-              <a href="https://instagram.com/refut_mx" className="text-gray-400 hover:text-pink-400 transition-colors">
+              <a href="https://instagram.com/refut_mx" target="_blank" className="text-gray-400 hover:text-pink-400 transition-colors">
                 <FaInstagram className="w-6 h-6" />
               </a>
               
               {/* Facebook */}
-              <a href="https://facebook.com/refut_mx" className="text-gray-400 hover:text-blue-400 transition-colors">
+              <a href="https://facebook.com/refutmx" target="_blank" className="text-gray-400 hover:text-blue-400 transition-colors">
                 <FaFacebook className="w-6 h-6" />
               </a>
               
               {/* TikTok */}
-              <a href="https://tiktok.com/@refut" className="text-gray-400 hover:text-black transition-colors">
+              <a href="https://tiktok.com/@refut" target="_blank" className="text-gray-400 hover:text-black transition-colors">
                 <FaTiktok className="w-6 h-6" />
               </a>
               
               {/* Email */}
-              <a href="mailto:refutoficial@gmail.com" className="text-gray-400 hover:text-green-400 transition-colors">
+              <a href="mailto:refutoficial@gmail.com" target="_blank" className="text-gray-400 hover:text-green-400 transition-colors">
                 <FaEnvelope className="w-6 h-6" />
               </a>
             </div>
