@@ -9,7 +9,6 @@ export { default as Footer } from './sections/Footer'
 // UI Components
 export { default as Logo } from './Logo'
 export { PrivacyNotice } from './PrivacyNotice'
-export { MigrationPanel } from './MigrationPanel'
 
 // Hooks
 export { useForm } from '../hooks/useForm'
