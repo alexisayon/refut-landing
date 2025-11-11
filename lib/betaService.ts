@@ -1,12 +1,12 @@
-import { 
-  collection, 
-  addDoc, 
-  getDocs, 
-  query, 
-  orderBy, 
+import {
+  collection,
+  addDoc,
+  getDocsFromServer,
+  query,
+  orderBy,
   limit,
   where,
-  Timestamp 
+  Timestamp
 } from 'firebase/firestore'
 import { db } from './firebase'
 
@@ -61,7 +61,7 @@ export class BetaService {
   static async getPublicStats(): Promise<{ totalUsers: number }> {
     try {
       const q = query(collection(db, this.COLLECTION_NAME))
-      const snapshot = await getDocs(q)
+      const snapshot = await getDocsFromServer(q)
       return {
         totalUsers: snapshot.size
       }
@@ -93,7 +93,7 @@ export class BetaService {
     try {
       // Obtener problemas de los registros de beta en lugar de user_feedback
       const q = query(collection(db, this.COLLECTION_NAME))
-      const snapshot = await getDocs(q)
+      const snapshot = await getDocsFromServer(q)
       
       const problemCounts: Record<string, number> = {}
       
@@ -129,7 +129,7 @@ export class BetaService {
         collection(db, this.COLLECTION_NAME),
         orderBy('timestamp', 'desc')
       )
-      const snapshot = await getDocs(q)
+      const snapshot = await getDocsFromServer(q)
       
       const registrations: BetaRegistration[] = []
       snapshot.forEach(doc => {
