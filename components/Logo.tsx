@@ -27,7 +27,7 @@ export const Logo = ({
     footer: '/logo/logorefut3.svg'       // Logo para footer (mejor contraste)
   }
 
-  const LogoImage = () => (
+  const logoImage = (
     <div className={`${sizeClasses[size]} ${className}`}>
       <Image
         src={logoPath[variant]}
@@ -40,15 +40,15 @@ export const Logo = ({
     </div>
   )
 
-  if (href) {
+  if (href && href !== '') {
     return (
       <Link href={href} className="inline-block">
-        <LogoImage />
+        {logoImage}
       </Link>
     )
   }
 
-  return <LogoImage />
+  return logoImage
 }
 
 // Componente para el favicon
