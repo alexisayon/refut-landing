@@ -62,11 +62,17 @@ export class BetaService {
     try {
       const q = query(collection(db, this.COLLECTION_NAME))
       const snapshot = await getDocsFromServer(q)
+      const totalUsers = snapshot.size
+      console.log(`📊 Total de usuarios en Firebase: ${totalUsers}`)
       return {
-        totalUsers: snapshot.size
+        totalUsers
       }
     } catch (error) {
       console.error('❌ Error obteniendo estadísticas:', error)
+      if (error instanceof Error) {
+        console.error('Error message:', error.message)
+        console.error('Error stack:', error.stack)
+      }
       return { totalUsers: 0 }
     }
   }
@@ -125,23 +131,87 @@ export class BetaService {
   // Obtener todos los registros (SOLO PARA ADMINISTRADORES)
   static async getAllRegistrations(): Promise<BetaRegistration[]> {
     try {
-      const q = query(
-        collection(db, this.COLLECTION_NAME),
-        orderBy('timestamp', 'desc')
-      )
-      const snapshot = await getDocsFromServer(q)
-      
-      const registrations: BetaRegistration[] = []
-      snapshot.forEach(doc => {
-        registrations.push({
-          id: doc.id,
-          ...doc.data()
-        } as BetaRegistration)
-      })
+      // Intentar primero con orderBy
+      try {
+        const q = query(
+          collection(db, this.COLLECTION_NAME),
+          orderBy('timestamp', 'desc')
+        )
+        const snapshot = await getDocsFromServer(q)
+        
+        const registrations: BetaRegistration[] = []
+        snapshot.forEach(doc => {
+          const data = doc.data()
+          registrations.push({
+            id: doc.id,
+            nombre: data.nombre || '',
+            email: data.email || '',
+            ubicacion: data.ubicacion || '',
+            nivelJuego: data.nivelJuego || '',
+            problemasPrincipales: data.problemasPrincipales || [],
+            otrasProblematicas: data.otrasProblematicas || '',
+            mayorReto: data.mayorReto || '',
+            interesEarlyAccess: data.interesEarlyAccess || false,
+            selectedProblems: data.selectedProblems || [],
+            additionalComment: data.additionalComment || '',
+            timestamp: data.timestamp || Timestamp.now(),
+            source: data.source || 'landing_page'
+          } as BetaRegistration)
+        })
 
-      return registrations
+        // Ordenar manualmente por timestamp si es necesario
+        registrations.sort((a, b) => {
+          const aTime = a.timestamp?.toMillis() || 0
+          const bTime = b.timestamp?.toMillis() || 0
+          return bTime - aTime
+        })
+
+        console.log(`✅ Registros obtenidos: ${registrations.length}`)
+        return registrations
+      } catch (orderByError: any) {
+        // Si falla por falta de índice, intentar sin orderBy
+        console.warn('⚠️ Error con orderBy, intentando sin ordenamiento:', orderByError)
+        
+        const q = query(collection(db, this.COLLECTION_NAME))
+        const snapshot = await getDocsFromServer(q)
+        
+        const registrations: BetaRegistration[] = []
+        snapshot.forEach(doc => {
+          const data = doc.data()
+          registrations.push({
+            id: doc.id,
+            nombre: data.nombre || '',
+            email: data.email || '',
+            ubicacion: data.ubicacion || '',
+            nivelJuego: data.nivelJuego || '',
+            problemasPrincipales: data.problemasPrincipales || [],
+            otrasProblematicas: data.otrasProblematicas || '',
+            mayorReto: data.mayorReto || '',
+            interesEarlyAccess: data.interesEarlyAccess || false,
+            selectedProblems: data.selectedProblems || [],
+            additionalComment: data.additionalComment || '',
+            timestamp: data.timestamp || Timestamp.now(),
+            source: data.source || 'landing_page'
+          } as BetaRegistration)
+        })
+
+        // Ordenar manualmente por timestamp
+        registrations.sort((a, b) => {
+          const aTime = a.timestamp?.toMillis() || 0
+          const bTime = b.timestamp?.toMillis() || 0
+          return bTime - aTime
+        })
+
+        console.log(`✅ Registros obtenidos (sin orderBy): ${registrations.length}`)
+        return registrations
+      }
     } catch (error) {
-      console.error('❌ Error obteniendo registros:', error)
+      console.error('❌ Error crítico obteniendo registros:', error)
+      // Log detallado del error para debugging
+      if (error instanceof Error) {
+        console.error('Error message:', error.message)
+        console.error('Error stack:', error.stack)
+      }
       return []
     }
   }
@@ -187,10 +257,18 @@ export class BetaService {
         if (reg.interesEarlyAccess) earlyAccessInterest++
       })
 
-      const recentRegistrations = allRegistrations.filter(reg => 
-        reg.timestamp.toMillis() > oneDayAgo.getTime()
-      ).length
+      const recentRegistrations = allRegistrations.filter(reg => {
+        if (!reg.timestamp) return false
+        try {
+          return reg.timestamp.toMillis() > oneDayAgo.getTime()
+        } catch (e) {
+          console.warn('Error procesando timestamp:', e, reg)
+          return false
+        }
+      }).length
 
+      console.log(`✅ Estadísticas calculadas: ${allRegistrations.length} registros totales`)
+      
       return {
         totalUsers: publicStats.totalUsers,
         problemCounts: feedbackStats.problemCounts,
@@ -202,6 +280,11 @@ export class BetaService {
       }
     } catch (error) {
       console.error('❌ Error obteniendo estadísticas detalladas:', error)
+      // Log detallado del error para debugging
+      if (error instanceof Error) {
+        console.error('Error message:', error.message)
+        console.error('Error stack:', error.stack)
+      }
       return {
         totalUsers: 0,
         problemCounts: {},

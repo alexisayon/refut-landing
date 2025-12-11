@@ -10,7 +10,7 @@ const nextConfig = {
   
   // Configuración optimizada para Vercel
   reactStrictMode: true,
-  swcMinify: true,
+  // swcMinify está habilitado por defecto en Next.js 13+ y ya no es necesario especificarlo
   images: {
     domains: [],
   },

@@ -40,19 +40,36 @@ export default function Admin() {
       setLoading(true)
       setError(null)
 
+      console.log('🔄 Cargando datos del admin...')
+
       // Cargar estadísticas detalladas
       const detailedStats = await BetaService.getDetailedStats()
+      console.log('📊 Estadísticas cargadas:', detailedStats)
       
       // Cargar todos los registros (con datos personales)
       const allRegistrations = await BetaService.getAllRegistrations()
+      console.log('👥 Registros cargados:', allRegistrations.length)
+
+      if (allRegistrations.length === 0) {
+        console.warn('⚠️ No se encontraron registros. Verifica:')
+        console.warn('  1. Que haya usuarios registrados en Firebase')
+        console.warn('  2. Que las reglas de Firestore permitan lectura')
+        console.warn('  3. Que la colección se llame "beta_registrations"')
+      }
 
       setStats({
         ...detailedStats,
         allRegistrations
       })
     } catch (err) {
-      console.error('Error cargando datos:', err)
-      setError('Error cargando datos de Firebase')
+      console.error('❌ Error cargando datos:', err)
+      if (err instanceof Error) {
+        console.error('Error message:', err.message)
+        console.error('Error stack:', err.stack)
+        setError(`Error cargando datos: ${err.message}`)
+      } else {
+        setError('Error cargando datos de Firebase')
+      }
     } finally {
       setLoading(false)
     }
@@ -355,40 +372,64 @@ export default function Admin() {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {stats.allRegistrations.slice(0, 10).map((reg) => (
-                      <tr key={reg.id} className="hover:bg-gray-50">
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                          {reg.nombre}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {reg.email}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {reg.ubicacion}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {reg.nivelJuego}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                            reg.interesEarlyAccess 
-                              ? 'bg-green-100 text-green-800' 
-                              : 'bg-gray-100 text-gray-800'
-                          }`}>
-                            {reg.interesEarlyAccess ? 'Sí' : 'No'}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {formatTimestamp(reg.timestamp)}
+                    {stats.allRegistrations.length > 0 ? (
+                      stats.allRegistrations.slice(0, 10).map((reg) => (
+                        <tr key={reg.id} className="hover:bg-gray-50">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                            {reg.nombre || 'Sin nombre'}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {reg.email || 'Sin email'}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {reg.ubicacion || 'Sin ubicación'}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {reg.nivelJuego || 'Sin nivel'}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                              reg.interesEarlyAccess 
+                                ? 'bg-green-100 text-green-800' 
+                                : 'bg-gray-100 text-gray-800'
+                            }`}>
+                              {reg.interesEarlyAccess ? 'Sí' : 'No'}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {reg.timestamp ? formatTimestamp(reg.timestamp) : 'Sin fecha'}
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan={6} className="px-6 py-8 text-center text-gray-500">
+                          <div className="flex flex-col items-center">
+                            <svg className="w-12 h-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                            </svg>
+                            <p className="text-lg font-medium mb-2">No hay registros disponibles</p>
+                            <p className="text-sm text-gray-400 mb-4">
+                              {error 
+                                ? 'Hubo un error al cargar los datos. Intenta recargar la página.'
+                                : 'Aún no hay usuarios registrados en la beta.'}
+                            </p>
+                            <button
+                              onClick={loadData}
+                              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                            >
+                              Recargar Datos
+                            </button>
+                          </div>
                         </td>
                       </tr>
-                    ))}
+                    )}
                   </tbody>
                 </table>
               </div>
-              {stats.allRegistrations.length === 0 && (
-                <div className="text-center py-8 text-gray-500">
-                  No hay registros disponibles
+              {stats.allRegistrations.length > 10 && (
+                <div className="bg-gray-50 px-6 py-3 text-sm text-gray-600 text-center">
+                  Mostrando los primeros 10 de {stats.allRegistrations.length} registros
                 </div>
               )}
             </div>
