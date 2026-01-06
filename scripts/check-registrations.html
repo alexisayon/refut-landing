@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Revisar Registros - ReFut</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      padding: 30px;
+    }
+    
+    h1 {
+      color: #333;
+      margin-bottom: 10px;
+      font-size: 2em;
+    }
+    
+    .subtitle {
+      color: #666;
+      margin-bottom: 30px;
+    }
+    
+    .section {
+      margin-bottom: 30px;
+      padding: 20px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      border-left: 4px solid #667eea;
+    }
+    
+    .section h2 {
+      color: #333;
+      margin-bottom: 15px;
+      font-size: 1.3em;
+    }
+    
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    
+    .stat-card {
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .stat-card .label {
+      color: #666;
+      font-size: 0.9em;
+      margin-bottom: 5px;
+    }
+    
+    .stat-card .value {
+      color: #333;
+      font-size: 1.8em;
+      font-weight: bold;
+    }
+    
+    .stat-card.success .value {
+      color: #10b981;
+    }
+    
+    .stat-card.warning .value {
+      color: #f59e0b;
+    }
+    
+    .stat-card.error .value {
+      color: #ef4444;
+    }
+    
+    .button {
+      background: #667eea;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1em;
+      font-weight: 500;
+      transition: all 0.3s;
+      margin-right: 10px;
+      margin-bottom: 10px;
+    }
+    
+    .button:hover {
+      background: #5568d3;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+    
+    .button:active {
+      transform: translateY(0);
+    }
+    
+    .button.success {
+      background: #10b981;
+    }
+    
+    .button.success:hover {
+      background: #059669;
+    }
+    
+    .button.warning {
+      background: #f59e0b;
+    }
+    
+    .button.warning:hover {
+      background: #d97706;
+    }
+    
+    .table-container {
+      overflow-x: auto;
+      margin-top: 15px;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    
+    th {
+      background: #667eea;
+      color: white;
+      padding: 12px;
+      text-align: left;
+      font-weight: 600;
+    }
+    
+    td {
+      padding: 12px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    
+    tr:hover {
+      background: #f8f9fa;
+    }
+    
+    .message {
+      padding: 15px;
+      border-radius: 6px;
+      margin-bottom: 15px;
+    }
+    
+    .message.info {
+      background: #dbeafe;
+      color: #1e40af;
+      border-left: 4px solid #3b82f6;
+    }
+    
+    .message.success {
+      background: #d1fae5;
+      color: #065f46;
+      border-left: 4px solid #10b981;
+    }
+    
+    .message.warning {
+      background: #fef3c7;
+      color: #92400e;
+      border-left: 4px solid #f59e0b;
+    }
+    
+    .message.error {
+      background: #fee2e2;
+      color: #991b1b;
+      border-left: 4px solid #ef4444;
+    }
+    
+    #console-output {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      padding: 20px;
+      border-radius: 8px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.9em;
+      max-height: 400px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+    
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #667eea;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-right: 10px;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔍 Revisar Registros de ReFut</h1>
+    <p class="subtitle">Herramienta para verificar registros guardados en localStorage</p>
+    
+    <div class="section">
+      <h2>📊 Estadísticas</h2>
+      <div class="stats" id="stats">
+        <div class="stat-card">
+          <div class="label">Lista Principal</div>
+          <div class="value" id="stat-lista">-</div>
+        </div>
+        <div class="stat-card">
+          <div class="label">Registros Individuales</div>
+          <div class="value" id="stat-individual">-</div>
+        </div>
+        <div class="stat-card">
+          <div class="label">Total Estimado</div>
+          <div class="value" id="stat-total">-</div>
+        </div>
+      </div>
+      
+      <div id="message-container"></div>
+      
+      <div>
+        <button class="button" onclick="checkRegistrations()">🔍 Revisar Registros</button>
+        <button class="button success" onclick="exportToJSON()">💾 Exportar a JSON</button>
+        <button class="button warning" onclick="migrateToFirebase()">🔄 Migrar a Firebase</button>
+        <button class="button" onclick="clearConsole()">🗑️ Limpiar Consola</button>
+      </div>
+    </div>
+    
+    <div class="section">
+      <h2>📋 Registros Encontrados</h2>
+      <div id="table-container" class="table-container">
+        <p style="color: #666; text-align: center; padding: 20px;">
+          Haz clic en "Revisar Registros" para ver los datos
+        </p>
+      </div>
+    </div>
+    
+    <div class="section">
+      <h2>💻 Consola de Salida</h2>
+      <div id="console-output"></div>
+    </div>
+  </div>
+
+  <script>
+    // Interceptar console.log para mostrar en la página
+    const originalLog = console.log;
+    const originalError = console.error;
+    const originalWarn = console.warn;
+    const output = document.getElementById('console-output');
+    
+    function addToConsole(message, type = 'log') {
+      const timestamp = new Date().toLocaleTimeString();
+      const prefix = type === 'error' ? '❌' : type === 'warn' ? '⚠️' : 'ℹ️';
+      output.textContent += `[${timestamp}] ${prefix} ${message}\n`;
+      output.scrollTop = output.scrollHeight;
+    }
+    
+    console.log = function(...args) {
+      originalLog.apply(console, args);
+      addToConsole(args.join(' '), 'log');
+    };
+    
+    console.error = function(...args) {
+      originalError.apply(console, args);
+      addToConsole(args.join(' '), 'error');
+    };
+    
+    console.warn = function(...args) {
+      originalWarn.apply(console, args);
+      addToConsole(args.join(' '), 'warn');
+    };
+    
+    function showMessage(text, type = 'info') {
+      const container = document.getElementById('message-container');
+      const message = document.createElement('div');
+      message.className = `message ${type}`;
+      message.textContent = text;
+      container.innerHTML = '';
+      container.appendChild(message);
+      setTimeout(() => {
+        message.style.opacity = '0';
+        message.style.transition = 'opacity 0.3s';
+        setTimeout(() => message.remove(), 300);
+      }, 5000);
+    }
+    
+    function updateStats(listaCount, individualCount, total) {
+      document.getElementById('stat-lista').textContent = listaCount;
+      document.getElementById('stat-individual').textContent = individualCount;
+      document.getElementById('stat-total').textContent = total;
+      
+      const cards = document.querySelectorAll('.stat-card');
+      cards.forEach(card => {
+        if (total > 0) {
+          card.classList.add('success');
+        } else {
+          card.classList.add('warning');
+        }
+      });
+    }
+    
+    function checkRegistrations() {
+      console.log('🔍 Iniciando revisión de registros...');
+      
+      try {
+        // Leer lista principal
+        let listaPrincipal = [];
+        try {
+          const listaData = localStorage.getItem('refut_early_access_list');
+          if (listaData) {
+            listaPrincipal = JSON.parse(listaData);
+          }
+        } catch (error) {
+          console.error('Error al leer la lista principal:', error);
+        }
+        
+        // Leer registros individuales
+        const allKeys = Object.keys(localStorage);
+        const registrationKeys = allKeys.filter(key => 
+          key.startsWith('refut_early_access_') && 
+          key !== 'refut_early_access_list'
+        );
+        
+        const total = Math.max(listaPrincipal.length, registrationKeys.length);
+        
+        updateStats(listaPrincipal.length, registrationKeys.length, total);
+        
+        // Mostrar tabla
+        if (listaPrincipal.length > 0) {
+          const table = document.createElement('table');
+          table.innerHTML = `
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Nombre</th>
+                <th>Email</th>
+                <th>Ubicación</th>
+                <th>Nivel</th>
+                <th>Fecha</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${listaPrincipal.map((reg, index) => `
+                <tr>
+                  <td>${index + 1}</td>
+                  <td>${reg.nombre || 'Sin nombre'}</td>
+                  <td>${reg.email || 'Sin email'}</td>
+                  <td>${reg.ubicacion || 'Sin ubicación'}</td>
+                  <td>${reg.nivelJuego || 'Sin nivel'}</td>
+                  <td>${reg.timestamp || 'Sin fecha'}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          `;
+          document.getElementById('table-container').innerHTML = '';
+          document.getElementById('table-container').appendChild(table);
+          
+          showMessage(`✅ Se encontraron ${listaPrincipal.length} registros`, 'success');
+        } else {
+          document.getElementById('table-container').innerHTML = `
+            <p style="color: #666; text-align: center; padding: 20px;">
+              ⚠️ No se encontraron registros en localStorage
+            </p>
+          `;
+          showMessage('⚠️ No se encontraron registros', 'warning');
+        }
+        
+        console.log(`✅ Revisión completada: ${total} registros encontrados`);
+        
+      } catch (error) {
+        console.error('Error al revisar registros:', error);
+        showMessage('❌ Error al revisar registros', 'error');
+      }
+    }
+    
+    function exportToJSON() {
+      try {
+        const listaData = localStorage.getItem('refut_early_access_list');
+        const listaPrincipal = listaData ? JSON.parse(listaData) : [];
+        
+        const exportData = {
+          exportDate: new Date().toISOString(),
+          source: 'localStorage',
+          totalRegistrations: listaPrincipal.length,
+          registrations: listaPrincipal
+        };
+        
+        const json = JSON.stringify(exportData, null, 2);
+        const blob = new Blob([json], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `refut-registros-${new Date().toISOString().split('T')[0]}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        
+        console.log('✅ Datos exportados exitosamente');
+        showMessage('✅ Archivo JSON descargado', 'success');
+      } catch (error) {
+        console.error('Error al exportar:', error);
+        showMessage('❌ Error al exportar datos', 'error');
+      }
+    }
+    
+    async function migrateToFirebase() {
+      showMessage('🔄 Iniciando migración...', 'info');
+      console.log('🔄 Iniciando migración a Firebase...');
+      
+      try {
+        // Nota: Esto requiere que estés en la página de la landing con Firebase configurado
+        if (typeof window.refutMigrationService === 'undefined') {
+          showMessage('⚠️ El servicio de migración no está disponible. Abre esta herramienta desde la landing page.', 'warning');
+          console.warn('⚠️ El servicio de migración no está disponible');
+          return;
+        }
+        
+        const result = await window.refutMigrationService.migrateLocalStorageData();
+        
+        console.log(`✅ Migración completada: ${result.migrated} migrados, ${result.errors} errores`);
+        showMessage(`✅ ${result.migrated} registros migrados exitosamente`, 'success');
+        
+        // Recargar datos
+        checkRegistrations();
+      } catch (error) {
+        console.error('Error en la migración:', error);
+        showMessage('❌ Error al migrar. Verifica la consola.', 'error');
+      }
+    }
+    
+    function clearConsole() {
+      output.textContent = '';
+      console.log('🗑️ Consola limpiada');
+    }
+    
+    // Revisar automáticamente al cargar
+    window.addEventListener('load', () => {
+      console.log('✅ Herramienta de revisión cargada');
+      console.log('💡 Haz clic en "Revisar Registros" para comenzar');
+    });
+  </script>
+</body>
+</html>
