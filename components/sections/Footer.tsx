@@ -1,72 +1,80 @@
 import React from 'react'
-import { FaWhatsapp, FaInstagram, FaFacebook, FaTiktok, FaEnvelope } from 'react-icons/fa'
+import Link from 'next/link'
+import { FaWhatsapp, FaInstagram, FaFacebook, FaTiktok, FaEnvelope, FaExternalLinkAlt } from 'react-icons/fa'
 import Logo from '../Logo'
+import { APP_URL } from '../../lib/constants'
 
 const Footer: React.FC = () => {
   return (
-    <footer className="bg-gray-900 text-white py-12 px-4 sm:px-6 lg:px-8">
+    <footer className="bg-refut-black border-t border-dark-border py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          <div className="col-span-1 md:col-span-2">
+          <div className="md:col-span-2">
             <div className="mb-4">
-              <Logo variant="footer" size="md" />
+              <Logo variant="white" size="md" href="/" />
             </div>
-            <p className="text-gray-300 mb-6 max-w-md">
-              Construyendo la comunidad del fútbol amateur en México. 
-              Tu voz, tu experiencia, tu comunidad.
+            <p className="text-white/70 mb-6 max-w-md">
+              La plataforma del fútbol amateur en México. Canchas, partidos, equipos y comunidad.
             </p>
-            <div className="flex space-x-4">
-              {/* WhatsApp */}
-              <a href="https://wa.me/5213310475942" className="text-gray-400 hover:text-green-400 transition-colors">
+            <div className="flex gap-4">
+              <a href="https://wa.me/5213310475942" target="_blank" rel="noopener noreferrer" className="text-white/60 hover:text-refut-green transition-colors" aria-label="WhatsApp">
                 <FaWhatsapp className="w-6 h-6" />
               </a>
-              
-              {/* Instagram */}
-              <a href="https://instagram.com/refut.mx" className="text-gray-400 hover:text-pink-400 transition-colors">
+              <a href="https://instagram.com/refut_mx" target="_blank" rel="noopener noreferrer" className="text-white/60 hover:text-refut-green transition-colors" aria-label="Instagram">
                 <FaInstagram className="w-6 h-6" />
               </a>
-              
-              {/* Facebook */}
-              <a href="https://facebook.com/refut.mx" className="text-gray-400 hover:text-blue-400 transition-colors">
+              <a href="https://facebook.com/refutmx" target="_blank" rel="noopener noreferrer" className="text-white/60 hover:text-refut-green transition-colors" aria-label="Facebook">
                 <FaFacebook className="w-6 h-6" />
               </a>
-              
-              {/* TikTok */}
-              <a href="https://tiktok.com/@refut.mx" className="text-gray-400 hover:text-black transition-colors">
+              <a href="https://tiktok.com/@refut" target="_blank" rel="noopener noreferrer" className="text-white/60 hover:text-refut-green transition-colors" aria-label="TikTok">
                 <FaTiktok className="w-6 h-6" />
               </a>
-              
-              {/* Email */}
-              <a href="mailto:refut@gmail.com" className="text-gray-400 hover:text-green-400 transition-colors">
+              <a href="mailto:refutoficial@gmail.com" className="text-white/60 hover:text-refut-green transition-colors" aria-label="Email">
                 <FaEnvelope className="w-6 h-6" />
               </a>
             </div>
           </div>
-          
           <div>
-            <h4 className="text-lg font-semibold mb-4">Proyecto</h4>
+            <h4 className="text-lg font-semibold text-white mb-4">Enlaces</h4>
             <ul className="space-y-2">
-              <li><a href="#proposito" className="text-gray-300 hover:text-white transition-colors">Propósito</a></li>
-              <li><a href="#problemas" className="text-gray-300 hover:text-white transition-colors">Problemas</a></li>
-              <li><a href="#estado" className="text-gray-300 hover:text-white transition-colors">Estado</a></li>
-              <li><a href="#faq" className="text-gray-300 hover:text-white transition-colors">FAQ</a></li>
+              <li>
+                <a href={APP_URL} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-white/70 hover:text-refut-green transition-colors focus:outline-none focus:ring-2 focus:ring-refut-green focus:ring-offset-2 focus:ring-offset-refut-black rounded">
+                  Entrar a la app
+                  <FaExternalLinkAlt className="w-3 h-3 opacity-70" aria-hidden />
+                </a>
+              </li>
+              <li>
+                <Link href="/terminos" className="text-white/70 hover:text-refut-green transition-colors focus:outline-none focus:ring-2 focus:ring-refut-green rounded">
+                  Términos y condiciones
+                </Link>
+              </li>
+              <li>
+                <Link href="/privacidad" className="text-white/70 hover:text-refut-green transition-colors focus:outline-none focus:ring-2 focus:ring-refut-green rounded">
+                  Aviso de privacidad
+                </Link>
+              </li>
+              <li>
+                <Link href="/beta" className="text-white/70 hover:text-refut-green transition-colors focus:outline-none focus:ring-2 focus:ring-refut-green rounded">
+                  ¿Quieres ser early adopter?
+                </Link>
+              </li>
             </ul>
           </div>
-          
           <div>
-            <h4 className="text-lg font-semibold mb-4">Comunidad</h4>
+            <h4 className="text-lg font-semibold text-white mb-4">Secciones</h4>
             <ul className="space-y-2">
-              <li><a href="#" className="text-gray-300 hover:text-white transition-colors">Beta Testing</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-white transition-colors">Feedback</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-white transition-colors">Roadmap</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-white transition-colors">Ayuda</a></li>
+              <li><a href="#que-es" className="text-white/70 hover:text-refut-green transition-colors focus:outline-none focus:ring-2 focus:ring-refut-green rounded">Qué es ReFut</a></li>
+              <li><a href="#funciones" className="text-white/70 hover:text-refut-green transition-colors focus:outline-none focus:ring-2 focus:ring-refut-green rounded">Funciones</a></li>
+              <li><a href="#plan" className="text-white/70 hover:text-refut-green transition-colors focus:outline-none focus:ring-2 focus:ring-refut-green rounded">Plan</a></li>
+              <li><a href="#como-funciona" className="text-white/70 hover:text-refut-green transition-colors focus:outline-none focus:ring-2 focus:ring-refut-green rounded">Cómo funciona</a></li>
+              <li><a href="#faq" className="text-white/70 hover:text-refut-green transition-colors focus:outline-none focus:ring-2 focus:ring-refut-green rounded">FAQ</a></li>
+              <li><a href="#contacto" className="text-white/70 hover:text-refut-green transition-colors focus:outline-none focus:ring-2 focus:ring-refut-green rounded">Contacto</a></li>
             </ul>
           </div>
         </div>
-        
-        <div className="border-t border-gray-800 mt-8 pt-8 text-center">
-          <p className="text-gray-400">
-            © 2025 ReFut. Todos los derechos reservados. Hecho con ❤️ en México.
+        <div className="border-t border-dark-border mt-8 pt-8 text-center">
+          <p className="text-white/50 text-sm">
+            © 2026 ReFut. Todos los derechos reservados. Hecho en México.
           </p>
         </div>
       </div>

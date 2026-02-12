@@ -97,3 +97,4 @@ Si encuentras registros en localStorage que no están en Firebase:
 - Los registros se guardan tanto en Firebase como en localStorage como respaldo
 - Si Firebase falla, los datos se guardan solo en localStorage
 - El script de migración puede recuperar estos registros perdidos
+

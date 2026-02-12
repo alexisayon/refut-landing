@@ -12,7 +12,9 @@ const nextConfig = {
   reactStrictMode: true,
   // swcMinify está habilitado por defecto en Next.js 13+ y ya no es necesario especificarlo
   images: {
-    domains: [],
+    remotePatterns: [
+      { protocol: 'https', hostname: 'images.unsplash.com', pathname: '/**' },
+    ],
   },
 }
 
