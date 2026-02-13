@@ -1,15 +1,7 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import Logo from './Logo'
 import { FaExternalLinkAlt } from 'react-icons/fa'
 import { APP_URL } from '../lib/constants'
-
-const BENEFIT_PHRASES = [
-  'Encuentra canchas en la ZMG en minutos',
-  'Organiza partidos sin complicaciones',
-  'Gratis y sin instalar nada',
-  'Llena tu partido sin mensajearte con todos',
-  'Reserva cancha desde el navegador',
-]
 
 const navLinks = [
   { href: '#que-es', label: 'Qué es ReFut' },
@@ -22,32 +14,9 @@ const navLinks = [
 
 const Nav: React.FC = () => {
   const [mobileOpen, setMobileOpen] = useState(false)
-  const [benefitIndex, setBenefitIndex] = useState(0)
-
-  useEffect(() => {
-    const id = setInterval(() => {
-      setBenefitIndex((i) => (i + 1) % BENEFIT_PHRASES.length)
-    }, 4000)
-    return () => clearInterval(id)
-  }, [])
 
   return (
     <nav className="sticky top-0 z-50 bg-refut-black/95 backdrop-blur border-b border-dark-border">
-      {/* Carrusel de beneficios */}
-      <div className="bg-refut-green/15 border-b border-dark-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
-          <div className="flex justify-center items-center min-h-[36px]">
-            <p
-              key={benefitIndex}
-              className="text-center text-sm md:text-base text-white/95 font-medium animate-fadeIn"
-              aria-live="polite"
-            >
-              {BENEFIT_PHRASES[benefitIndex]}
-            </p>
-          </div>
-        </div>
-      </div>
-
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <Logo variant="white" size="md" href="/" />
