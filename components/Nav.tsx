@@ -40,15 +40,6 @@ const Nav: React.FC = () => {
               Quiero jugar
               <FaExternalLinkAlt className="w-3 h-3 opacity-80" aria-hidden />
             </a>
-            <a
-              href={APP_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 border border-dark-border text-white/90 px-4 py-2 rounded-xl font-medium hover:border-refut-green/50 hover:text-refut-green transition-colors text-sm focus:outline-none focus:ring-2 focus:ring-refut-green focus:ring-offset-2 focus:ring-offset-refut-black"
-            >
-              Entrar a la app
-              <FaExternalLinkAlt className="w-3 h-3 opacity-80" aria-hidden />
-            </a>
           </div>
 
           <button
