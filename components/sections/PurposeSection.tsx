@@ -1,4 +1,6 @@
 import React from 'react'
+import { FaExternalLinkAlt } from 'react-icons/fa'
+import { APP_URL } from '../../lib/constants'
 
 const PurposeSection: React.FC = () => {
   return (
@@ -25,6 +27,17 @@ const PurposeSection: React.FC = () => {
             <span><strong className="text-white">Si eres dueño de cancha:</strong> muestra horarios libres y recibe reservas.</span>
           </li>
         </ul>
+        <div className="mt-12 text-center">
+          <a
+            href={APP_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 bg-refut-green text-white px-8 py-3 rounded-xl font-semibold hover:bg-accent-greenDark transition-colors focus:outline-none focus:ring-2 focus:ring-refut-green focus:ring-offset-2 focus:ring-offset-dark-surface"
+          >
+            Quiero jugar
+            <FaExternalLinkAlt className="w-4 h-4 opacity-80" aria-hidden />
+          </a>
+        </div>
       </div>
     </section>
   )

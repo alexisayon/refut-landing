@@ -8,8 +8,8 @@ const HeroSection: React.FC = () => {
     <section id="hero-section" className="relative py-20 px-4 sm:px-6 lg:px-8 bg-refut-black">
       <div className="max-w-4xl mx-auto text-center">
         <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 animate-fadeIn">
-          Encuentra canchas y arma tu partido en minutos en la{' '}
-          <span className="text-refut-green">ZMG</span>
+          Organiza partidos sin complicaciones en{' '}
+          <span className="text-refut-green">2 minutos</span>
         </h1>
         <p className="text-xl md:text-2xl text-refut-green mb-4 max-w-2xl mx-auto font-medium">
           Hoy disponible en la Zona Metropolitana de Guadalajara; pronto más ciudades.
