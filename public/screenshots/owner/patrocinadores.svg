@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="750" viewBox="0 0 1200 750" fill="none">
+  <rect width="1200" height="750" fill="#1D1D1B"/>
+  <text x="80" y="90" fill="#fff" font-family="system-ui,sans-serif" font-size="32" font-weight="700">Patrocinadores</text>
+  <rect x="80" y="130" width="320" height="200" rx="16" fill="#252523" stroke="#D4AF37" stroke-width="2"/>
+  <text x="110" y="180" fill="#D4AF37" font-family="system-ui,sans-serif" font-size="14" font-weight="700">ORO</text>
+  <rect x="110" y="200" width="260" height="60" rx="8" fill="#333"/>
+  <text x="240" y="238" fill="#aaa" font-family="system-ui,sans-serif" font-size="14" text-anchor="middle">Logo patrocinador</text>
+  <rect x="440" y="130" width="320" height="200" rx="16" fill="#252523" stroke="#C0C0C0"/>
+  <text x="470" y="180" fill="#C0C0C0" font-family="system-ui,sans-serif" font-size="14" font-weight="700">PLATA</text>
+  <rect x="800" y="130" width="320" height="200" rx="16" fill="#252523" stroke="#CD7F32"/>
+  <text x="830" y="180" fill="#CD7F32" font-family="system-ui,sans-serif" font-size="14" font-weight="700">BRONCE</text>
+  <rect x="80" y="380" width="1040" height="280" rx="16" fill="#252523" stroke="#3A3A38"/>
+  <text x="110" y="430" fill="#11A24A" font-family="system-ui,sans-serif" font-size="18" font-weight="700">Analítica de clics</text>
+  <rect x="110" y="460" width="980" height="24" rx="4" fill="#11A24A" opacity="0.3"/>
+  <rect x="110" y="500" width="720" height="24" rx="4" fill="#11A24A" opacity="0.2"/>
+  <rect x="110" y="540" width="480" height="24" rx="4" fill="#11A24A" opacity="0.15"/>
+  <text x="110" y="600" fill="#aaa" font-family="system-ui,sans-serif" font-size="14">Exporta reportes CSV de rendimiento por patrocinador</text>
+</svg>

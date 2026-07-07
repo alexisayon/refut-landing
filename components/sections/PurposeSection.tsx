@@ -1,6 +1,7 @@
 import React from 'react'
 import { FaExternalLinkAlt } from 'react-icons/fa'
 import { APP_URL } from '../../lib/constants'
+import OwnerAudienceLink from '../OwnerAudienceLink'
 
 const PurposeSection: React.FC = () => {
   return (
@@ -27,7 +28,7 @@ const PurposeSection: React.FC = () => {
             <span><strong className="text-white">Si eres dueño de cancha:</strong> muestra horarios libres y recibe reservas.</span>
           </li>
         </ul>
-        <div className="mt-12 text-center">
+        <div className="mt-12 flex flex-col sm:flex-row gap-4 justify-center items-center">
           <a
             href={APP_URL}
             target="_blank"
@@ -37,6 +38,9 @@ const PurposeSection: React.FC = () => {
             Quiero jugar
             <FaExternalLinkAlt className="w-4 h-4 opacity-80" aria-hidden />
           </a>
+          <OwnerAudienceLink variant="button">
+            Ver solución para dueños
+          </OwnerAudienceLink>
         </div>
       </div>
     </section>

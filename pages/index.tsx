@@ -1,5 +1,4 @@
 import type { NextPage } from 'next'
-import Head from 'next/head'
 import {
   Nav,
   HeroSection,
@@ -13,42 +12,71 @@ import {
   AboutSection,
   ContactSection,
   Footer,
+  CourtsCatalogSection,
+  CommunityGallerySection,
+  PartnerSpotlightSection,
 } from '../components'
-import StructuredData from '../components/StructuredData'
+import {
+  OwnerHeroSection,
+  OwnerFeaturesSection,
+  OwnerPersonasSection,
+  OwnerHowItWorksSection,
+  OwnerDemoSection,
+  OwnerFAQSection,
+  OwnerMembershipSection,
+  OwnerCTASection,
+} from '../components/sections/owner'
+import LandingHead from '../components/LandingHead'
 import StickyCTA from '../components/StickyCTA'
+import { useAudience } from '../hooks/useAudience'
+
+const PlayersView: React.FC = () => (
+  <>
+    <HeroSection />
+    <CourtsCatalogSection />
+    <PurposeSection />
+    <FeaturesSection />
+    <CommunityGallerySection />
+    <GeographicContentSection />
+    <RoadmapSection />
+    <HowItWorksSection />
+    <AppAccessSection />
+    <FAQSection />
+    <AboutSection />
+  </>
+)
+
+const OwnersView: React.FC = () => (
+  <>
+    <OwnerHeroSection />
+    <CourtsCatalogSection />
+    <OwnerFeaturesSection />
+    <PartnerSpotlightSection />
+    <OwnerPersonasSection />
+    <OwnerDemoSection />
+    <CommunityGallerySection />
+    <OwnerHowItWorksSection />
+    <OwnerMembershipSection />
+    <OwnerFAQSection />
+    <OwnerCTASection />
+  </>
+)
 
 const Home: NextPage = () => {
+  const { audience, isReady } = useAudience()
+
   return (
     <>
-      <Head>
-        <title>ReFut – Canchas de fútbol en la ZMG, organiza partidos y torneos amateur en Guadalajara</title>
-        <meta
-          name="description"
-          content="Encuentra canchas de fútbol rápido y soccer en la Zona Metropolitana de Guadalajara, organiza partidos, arma equipos y gestiona torneos con ReFut, gratis desde el navegador"
-        />
-        <meta name="keywords" content="canchas de fútbol rápido Guadalajara, rentar cancha Zapopan, canchas soccer ZMG, partidos fútbol amateur Guadalajara, ligas fútbol ZMG, canchas fútbol 7 Guadalajara, canchas fútbol 11 ZMG" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta property="og:title" content="ReFut – Canchas de fútbol en la ZMG, organiza partidos y torneos amateur en Guadalajara" />
-        <meta property="og:description" content="Canchas de fútbol en Guadalajara y la ZMG. Organiza partidos, arma equipos y reserva canchas gratis" />
-        <meta property="og:type" content="website" />
-        <meta property="og:image" content="https://refut.vercel.app/og-image.jpg" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="ReFut – Canchas de fútbol en la ZMG, organiza partidos y torneos amateur en Guadalajara" />
-        <meta name="twitter:description" content="Canchas de fútbol en Guadalajara y la ZMG. Organiza partidos, arma equipos y reserva canchas gratis" />
-        <StructuredData />
-      </Head>
-
+      <LandingHead />
       <div className="min-h-screen bg-refut-black pb-16 md:pb-0">
         <Nav />
-        <HeroSection />
-        <PurposeSection />
-        <FeaturesSection />
-        <GeographicContentSection />
-        <RoadmapSection />
-        <HowItWorksSection />
-        <AppAccessSection />
-        <FAQSection />
-        <AboutSection />
+        {!isReady ? (
+          <div className="py-32 text-center text-white/60">Cargando...</div>
+        ) : audience === 'duenos' ? (
+          <OwnersView />
+        ) : (
+          <PlayersView />
+        )}
         <ContactSection />
         <Footer />
         <StickyCTA />

@@ -1,0 +1,8 @@
+export { default as OwnerHeroSection } from './OwnerHeroSection'
+export { default as OwnerFeaturesSection } from './OwnerFeaturesSection'
+export { default as OwnerPersonasSection } from './OwnerPersonasSection'
+export { default as OwnerHowItWorksSection } from './OwnerHowItWorksSection'
+export { default as OwnerDemoSection } from './OwnerDemoSection'
+export { default as OwnerFAQSection } from './OwnerFAQSection'
+export { default as OwnerMembershipSection } from './OwnerMembershipSection'
+export { default as OwnerCTASection } from './OwnerCTASection'

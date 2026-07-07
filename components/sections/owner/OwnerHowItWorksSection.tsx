@@ -3,33 +3,39 @@ import React from 'react'
 const steps = [
   {
     number: '01',
-    title: 'Busca cancha cerca',
+    title: 'Solicita acceso',
     description:
-      'Filtra por zona, tipo de cancha y precio. Mira horarios y elige dónde jugar en la ZMG.',
+      'Cuéntanos sobre tu cancha, complejo o torneo. Evaluamos cada solicitud en la ZMG.',
   },
   {
     number: '02',
-    title: 'Reserva o arma tu partido',
+    title: 'Configura tu operación',
     description:
-      'Aparta horario desde la app o publica una reta. Los jugadores se apuntan sin grupos eternos de WhatsApp.',
+      'Agrega sedes, horarios, equipos o la estructura de tu liga. Te acompañamos en el onboarding.',
   },
   {
     number: '03',
-    title: 'Juega y compite',
+    title: 'Publica y promociona',
     description:
-      'Confirma asistencia, arma equipos y únete a torneos con tabla en vivo y página pública.',
+      'Comparte tu página pública, abre inscripciones y aparece en el catálogo de la red ReFut.',
+  },
+  {
+    number: '04',
+    title: 'Opera el día a día',
+    description:
+      'Gestiona reservas, partidos, resultados, staff y patrocinadores desde un solo panel.',
   },
 ]
 
-const HowItWorksSection: React.FC = () => {
+const OwnerHowItWorksSection: React.FC = () => {
   return (
-    <section id="como-funciona" className="py-20 px-4 sm:px-6 lg:px-8 bg-refut-black">
+    <section id="como-funciona-duenos" className="py-20 px-4 sm:px-6 lg:px-8 bg-refut-black">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-12">
           <p className="text-refut-green font-medium text-sm uppercase tracking-wide mb-3">
-            Menos organizar. Más jugar.
+            Para canchas y organizadores
           </p>
-          <h2 className="text-3xl md:text-4xl font-bold text-white">Cómo funciona ReFut</h2>
+          <h2 className="text-3xl md:text-4xl font-bold text-white">Cómo empezar con ReFut</h2>
         </div>
         <div className="space-y-4">
           {steps.map((step) => (
@@ -52,4 +58,4 @@ const HowItWorksSection: React.FC = () => {
   )
 }
 
-export default HowItWorksSection
+export default OwnerHowItWorksSection

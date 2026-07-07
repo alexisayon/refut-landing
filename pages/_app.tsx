@@ -3,6 +3,7 @@ import { useRouter } from 'next/router'
 import { useEffect } from 'react'
 import { Analytics } from '@vercel/analytics/react'
 import GoogleAnalytics from '../components/GoogleAnalytics'
+import { AudienceProvider } from '../contexts/AudienceContext'
 import { pageview } from '../lib/gtag'
 import '../styles/globals.css'
 
@@ -21,10 +22,10 @@ export default function App({ Component, pageProps }: AppProps) {
   }, [router.events])
 
   return (
-    <>
+    <AudienceProvider>
       <GoogleAnalytics />
       <Component {...pageProps} />
       <Analytics />
-    </>
+    </AudienceProvider>
   )
 }

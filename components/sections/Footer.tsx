@@ -2,9 +2,32 @@ import React from 'react'
 import Link from 'next/link'
 import { FaWhatsapp, FaInstagram, FaFacebook, FaTiktok, FaEnvelope, FaExternalLinkAlt } from 'react-icons/fa'
 import Logo from '../Logo'
-import { APP_URL } from '../../lib/constants'
+import OwnerAudienceLink from '../OwnerAudienceLink'
+import { APP_URL, OWNER_CONTACT_URL, OWNER_PANEL_URL } from '../../lib/constants'
+import { useAudience } from '../../hooks/useAudience'
+
+const playerSections = [
+  { href: '#canchas', label: 'Canchas' },
+  { href: '#funciones', label: 'Funciones' },
+  { href: '#comunidad', label: 'Comunidad' },
+  { href: '#como-funciona', label: 'Cómo funciona' },
+  { href: '#faq', label: 'FAQ' },
+  { href: '#contacto', label: 'Contacto' },
+]
+
+const ownerSections = [
+  { href: '#canchas', label: 'Canchas' },
+  { href: '#funciones-duenos', label: 'Funciones' },
+  { href: '#membresias-duenos', label: 'Membresías' },
+  { href: '#socios-destacados', label: 'Socios' },
+  { href: '#demo-duenos', label: 'Demo' },
+  { href: '#contacto-duenos', label: 'Contacto' },
+]
 
 const Footer: React.FC = () => {
+  const { audience } = useAudience()
+  const isOwner = audience === 'duenos'
+
   return (
     <footer className="bg-refut-black border-t border-dark-border py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
@@ -44,6 +67,25 @@ const Footer: React.FC = () => {
                 </a>
               </li>
               <li>
+                <a
+                  href={isOwner ? OWNER_CONTACT_URL : '/?audience=duenos#contacto-duenos'}
+                  className="inline-flex items-center gap-1.5 text-white/70 hover:text-refut-green transition-colors focus:outline-none focus:ring-2 focus:ring-refut-green rounded"
+                >
+                  Solicitar acceso como socio
+                </a>
+              </li>
+              <li>
+                <a
+                  href={OWNER_PANEL_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-white/70 hover:text-refut-green transition-colors focus:outline-none focus:ring-2 focus:ring-refut-green rounded"
+                >
+                  Panel de socio
+                  <FaExternalLinkAlt className="w-3 h-3 opacity-70" aria-hidden />
+                </a>
+              </li>
+              <li>
                 <Link href="/terminos" className="text-white/70 hover:text-refut-green transition-colors focus:outline-none focus:ring-2 focus:ring-refut-green rounded">
                   Términos y condiciones
                 </Link>
@@ -58,17 +100,27 @@ const Footer: React.FC = () => {
                   ¿Quieres ser early adopter?
                 </Link>
               </li>
+              {!isOwner && (
+                <li>
+                  <OwnerAudienceLink variant="footer">
+                    Vista para dueños y organizadores
+                  </OwnerAudienceLink>
+                </li>
+              )}
             </ul>
           </div>
           <div>
-            <h4 className="text-lg font-semibold text-white mb-4">Secciones</h4>
+            <h4 className="text-lg font-semibold text-white mb-4">
+              {isOwner ? 'Para dueños' : 'Secciones'}
+            </h4>
             <ul className="space-y-2">
-              <li><a href="#que-es" className="text-white/70 hover:text-refut-green transition-colors focus:outline-none focus:ring-2 focus:ring-refut-green rounded">Qué es ReFut</a></li>
-              <li><a href="#funciones" className="text-white/70 hover:text-refut-green transition-colors focus:outline-none focus:ring-2 focus:ring-refut-green rounded">Funciones</a></li>
-              <li><a href="#plan" className="text-white/70 hover:text-refut-green transition-colors focus:outline-none focus:ring-2 focus:ring-refut-green rounded">Plan</a></li>
-              <li><a href="#como-funciona" className="text-white/70 hover:text-refut-green transition-colors focus:outline-none focus:ring-2 focus:ring-refut-green rounded">Cómo funciona</a></li>
-              <li><a href="#faq" className="text-white/70 hover:text-refut-green transition-colors focus:outline-none focus:ring-2 focus:ring-refut-green rounded">FAQ</a></li>
-              <li><a href="#contacto" className="text-white/70 hover:text-refut-green transition-colors focus:outline-none focus:ring-2 focus:ring-refut-green rounded">Contacto</a></li>
+              {(isOwner ? ownerSections : playerSections).map((item) => (
+                <li key={item.href}>
+                  <a href={item.href} className="text-white/70 hover:text-refut-green transition-colors focus:outline-none focus:ring-2 focus:ring-refut-green rounded">
+                    {item.label}
+                  </a>
+                </li>
+              ))}
             </ul>
           </div>
         </div>

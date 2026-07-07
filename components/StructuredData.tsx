@@ -1,14 +1,46 @@
 import React from 'react'
-import { APP_URL } from '../lib/constants'
+import { APP_URL, SITE_URL } from '../lib/constants'
+import { ownerFaqs } from '../lib/ownerContent'
+import type { Audience } from '../lib/constants'
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://refut.app'
+interface StructuredDataProps {
+  audience?: Audience
+}
 
-const StructuredData: React.FC = () => {
+const playerFaqs = [
+  {
+    question: '¿Qué es ReFut?',
+    answer:
+      'ReFut es una plataforma web para encontrar canchas de fútbol y organizar partidos amateur en la Zona Metropolitana de Guadalajara. Funciona en navegador, sin instalar app, y está pensada para jugadores, organizadores y dueños de canchas.',
+  },
+  {
+    question: '¿Dónde está disponible?',
+    answer:
+      'ReFut está disponible en la Zona Metropolitana de Guadalajara (ZMG), incluyendo Guadalajara, Zapopan, Tlaquepaque, Tonalá y municipios cercanos. Pronto expandiremos a más ciudades.',
+  },
+  {
+    question: '¿Cómo me registro?',
+    answer:
+      'Entra desde el navegador, crea cuenta con email o redes sociales y empieza a buscar canchas o partidos cerca de ti.',
+  },
+  {
+    question: '¿Es gratis?',
+    answer:
+      'Sí. Las funciones básicas como buscar canchas, crear partidos, armar equipos y hacer reservas son completamente gratuitas. Algunas funciones premium pueden tener costo en el futuro.',
+  },
+]
+
+const StructuredData: React.FC<StructuredDataProps> = ({ audience = 'jugadores' }) => {
+  const faqs = audience === 'duenos' ? ownerFaqs : playerFaqs
+
   const websiteSchema = {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
     name: 'ReFut',
-    description: 'Plataforma para encontrar canchas de fútbol y organizar partidos amateur en la Zona Metropolitana de Guadalajara',
+    description:
+      audience === 'duenos'
+        ? 'Panel de administración para dueños de canchas, complejos deportivos y organizadores de ligas y torneos en la ZMG'
+        : 'Plataforma para encontrar canchas de fútbol y organizar partidos amateur en la Zona Metropolitana de Guadalajara',
     url: SITE_URL,
     potentialAction: {
       '@type': 'SearchAction',
@@ -24,7 +56,10 @@ const StructuredData: React.FC = () => {
     '@context': 'https://schema.org',
     '@type': 'SportsActivityLocation',
     name: 'ReFut',
-    description: 'Plataforma web para encontrar canchas de fútbol y organizar partidos amateur en la Zona Metropolitana de Guadalajara',
+    description:
+      audience === 'duenos'
+        ? 'Herramientas para administrar canchas, ligas y torneos de fútbol amateur en la Zona Metropolitana de Guadalajara'
+        : 'Plataforma web para encontrar canchas de fútbol y organizar partidos amateur en la Zona Metropolitana de Guadalajara',
     url: SITE_URL,
     areaServed: {
       '@type': 'City',
@@ -40,62 +75,23 @@ const StructuredData: React.FC = () => {
       addressRegion: 'Jalisco',
       addressCountry: 'MX',
     },
-    serviceType: 'Canchas de fútbol, organización de partidos amateur, reservas de cancha',
+    serviceType:
+      audience === 'duenos'
+        ? 'Administración de canchas, ligas, torneos y reservas deportivas'
+        : 'Canchas de fútbol, organización de partidos amateur, reservas de cancha',
   }
 
   const faqSchema = {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
-    mainEntity: [
-      {
-        '@type': 'Question',
-        name: '¿Qué es ReFut?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'ReFut es una plataforma web para encontrar canchas de fútbol y organizar partidos amateur en la Zona Metropolitana de Guadalajara. Funciona en navegador, sin instalar app, y está pensada para jugadores, organizadores y dueños de canchas.',
-        },
+    mainEntity: faqs.map((faq) => ({
+      '@type': 'Question',
+      name: faq.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: faq.answer,
       },
-      {
-        '@type': 'Question',
-        name: '¿Dónde está disponible?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'ReFut está disponible en la Zona Metropolitana de Guadalajara (ZMG), incluyendo Guadalajara, Zapopan, Tlaquepaque, Tonalá y municipios cercanos. Pronto expandiremos a más ciudades.',
-        },
-      },
-      {
-        '@type': 'Question',
-        name: '¿Dónde puedo encontrar canchas de fútbol rápido en Guadalajara?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'Con ReFut puedes buscar canchas de fútbol rápido en Guadalajara usando el mapa interactivo. Filtra por zona, precio y horario para encontrar la mejor cancha cerca de ti.',
-        },
-      },
-      {
-        '@type': 'Question',
-        name: '¿Cómo rento una cancha en Zapopan?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'En ReFut puedes ver canchas disponibles en Zapopan, revisar horarios libres y hacer reservas directamente desde la plataforma. Todo el proceso es gratuito.',
-        },
-      },
-      {
-        '@type': 'Question',
-        name: '¿Cómo me registro?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'Entra desde el navegador, crea cuenta con email o redes sociales y empieza a buscar canchas o partidos cerca de ti.',
-        },
-      },
-      {
-        '@type': 'Question',
-        name: '¿Es gratis?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'Sí. Las funciones básicas como buscar canchas, crear partidos, armar equipos y hacer reservas son completamente gratuitas. Algunas funciones premium pueden tener costo en el futuro.',
-        },
-      },
-    ],
+    })),
   }
 
   return (

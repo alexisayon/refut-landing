@@ -1,0 +1,10 @@
+User-agent: *
+Disallow: /admin/
+Disallow: /admin-login
+Disallow: /check-registrations
+Disallow: /staging-access
+Disallow: /api/
+
+Allow: /
+
+Sitemap: https://landing.refut.app/sitemap.xml

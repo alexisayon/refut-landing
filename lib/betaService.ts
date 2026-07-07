@@ -8,7 +8,7 @@ import {
   where,
   Timestamp
 } from 'firebase/firestore'
-import { db } from './firebase'
+import { getDb } from './firebase'
 
 export interface BetaRegistration {
   id?: string
@@ -48,7 +48,7 @@ export class BetaService {
         source: 'landing_page'
       }
 
-      const docRef = await addDoc(collection(db, this.COLLECTION_NAME), registrationData)
+      const docRef = await addDoc(collection(getDb(), this.COLLECTION_NAME), registrationData)
       console.log('✅ Usuario registrado en Firebase:', docRef.id)
       return docRef.id
     } catch (error) {
@@ -60,7 +60,7 @@ export class BetaService {
   // Obtener estadísticas públicas (solo conteo)
   static async getPublicStats(): Promise<{ totalUsers: number }> {
     try {
-      const q = query(collection(db, this.COLLECTION_NAME))
+      const q = query(collection(getDb(), this.COLLECTION_NAME))
       const snapshot = await getDocsFromServer(q)
       const totalUsers = snapshot.size
       console.log(`📊 Total de usuarios en Firebase: ${totalUsers}`)
@@ -85,7 +85,7 @@ export class BetaService {
         timestamp: Timestamp.now()
       }
 
-      const docRef = await addDoc(collection(db, this.FEEDBACK_COLLECTION), feedbackData)
+      const docRef = await addDoc(collection(getDb(), this.FEEDBACK_COLLECTION), feedbackData)
       console.log('✅ Feedback guardado:', docRef.id)
       return docRef.id
     } catch (error) {
@@ -98,7 +98,7 @@ export class BetaService {
   static async getFeedbackStats(): Promise<{ problemCounts: Record<string, number> }> {
     try {
       // Obtener problemas de los registros de beta en lugar de user_feedback
-      const q = query(collection(db, this.COLLECTION_NAME))
+      const q = query(collection(getDb(), this.COLLECTION_NAME))
       const snapshot = await getDocsFromServer(q)
       
       const problemCounts: Record<string, number> = {}
@@ -134,7 +134,7 @@ export class BetaService {
       // Intentar primero con orderBy
       try {
         const q = query(
-          collection(db, this.COLLECTION_NAME),
+          collection(getDb(), this.COLLECTION_NAME),
           orderBy('timestamp', 'desc')
         )
         const snapshot = await getDocsFromServer(q)
@@ -172,7 +172,7 @@ export class BetaService {
         // Si falla por falta de índice, intentar sin orderBy
         console.warn('⚠️ Error con orderBy, intentando sin ordenamiento:', orderByError)
         
-        const q = query(collection(db, this.COLLECTION_NAME))
+        const q = query(collection(getDb(), this.COLLECTION_NAME))
         const snapshot = await getDocsFromServer(q)
         
         const registrations: BetaRegistration[] = []
