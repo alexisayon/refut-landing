@@ -173,10 +173,14 @@ const Privacidad = () => {
                 <h2 className="text-2xl font-semibold text-gray-900 mb-4">
                   7. Cookies y Tecnologías Similares
                 </h2>
+                <p className="text-gray-700 leading-relaxed mb-4">
+                  Usamos cookies técnicas necesarias para el funcionamiento del sitio (por ejemplo,
+                  acceso a vistas de staging) y, solo si aceptas en el banner, cookies de analítica
+                  (Google Analytics y Vercel Analytics) para medir visitas y mejorar la experiencia.
+                </p>
                 <p className="text-gray-700 leading-relaxed">
-                  Utilizamos cookies y tecnologías similares para mejorar tu experiencia, 
-                  analizar el uso del sitio y personalizar el contenido. Puedes controlar 
-                  el uso de cookies a través de la configuración de tu navegador.
+                  Puedes aceptar o rechazar las cookies de analítica desde el banner al entrar al
+                  sitio. También puedes borrarlas desde la configuración de tu navegador.
                 </p>
               </section>
 

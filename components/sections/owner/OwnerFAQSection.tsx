@@ -30,6 +30,7 @@ const OwnerFAQSection: React.FC = () => {
               >
                 <span className="font-semibold text-white">{faq.question}</span>
                 <FaChevronDown
+                  aria-hidden
                   className={`w-5 h-5 text-white/60 shrink-0 ml-2 transition-transform duration-200 ${
                     openIndex === index ? 'rotate-180' : ''
                   }`}

@@ -135,18 +135,20 @@ const LeadCaptureForm: React.FC = () => {
 
   return (
     <div className="bg-dark-surface border border-dark-border rounded-2xl p-6 md:p-8 max-w-xl mx-auto text-left">
-      <div className="flex rounded-xl bg-refut-black p-1 mb-6" role="tablist">
+      <div className="flex rounded-xl bg-refut-black p-1 mb-6" role="tablist" aria-label="Tipo de contacto">
         {(
           [
-            { id: 'jugador' as const, label: 'Soy jugador' },
-            { id: 'cancha' as const, label: 'Tengo cancha / torneo' },
+            { id: 'jugador' as const, label: 'Soy jugador', panelId: 'lead-panel-jugador' },
+            { id: 'cancha' as const, label: 'Tengo cancha / torneo', panelId: 'lead-panel-cancha' },
           ] as const
         ).map((tab) => (
           <button
             key={tab.id}
             type="button"
             role="tab"
+            id={`lead-tab-${tab.id}`}
             aria-selected={persona === tab.id}
+            aria-controls={tab.panelId}
             onClick={() => setPersona(tab.id)}
             className={`flex-1 py-2.5 px-3 rounded-lg text-sm font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-refut-green ${
               persona === tab.id
@@ -165,7 +167,13 @@ const LeadCaptureForm: React.FC = () => {
           : 'Evaluamos cada solicitud de socio. Te respondemos con el plan que aplique.'}
       </p>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form
+        onSubmit={handleSubmit}
+        className="space-y-4"
+        role="tabpanel"
+        id={persona === 'jugador' ? 'lead-panel-jugador' : 'lead-panel-cancha'}
+        aria-labelledby={`lead-tab-${persona}`}
+      >
         <input
           type="text"
           name="website"
@@ -193,7 +201,7 @@ const LeadCaptureForm: React.FC = () => {
             maxLength={50}
             required
           />
-          {errors.nombre && <p className="text-red-400 text-xs mt-1">{errors.nombre}</p>}
+          {errors.nombre && <p role="alert" className="text-red-400 text-xs mt-1">{errors.nombre}</p>}
         </div>
 
         <div>
@@ -211,7 +219,7 @@ const LeadCaptureForm: React.FC = () => {
             placeholder="tu@correo.com"
             required
           />
-          {errors.email && <p className="text-red-400 text-xs mt-1">{errors.email}</p>}
+          {errors.email && <p role="alert" className="text-red-400 text-xs mt-1">{errors.email}</p>}
         </div>
 
         <div>
@@ -294,9 +302,9 @@ const LeadCaptureForm: React.FC = () => {
             . *
           </span>
         </label>
-        {errors.privacy && <p className="text-red-400 text-xs">{errors.privacy}</p>}
+        {errors.privacy && <p role="alert" className="text-red-400 text-xs">{errors.privacy}</p>}
         {errors.general && (
-          <p className="text-red-400 text-sm bg-red-500/10 border border-red-500/30 rounded-lg px-4 py-3">
+          <p role="alert" className="text-red-400 text-sm bg-red-500/10 border border-red-500/30 rounded-lg px-4 py-3">
             {errors.general}
           </p>
         )}

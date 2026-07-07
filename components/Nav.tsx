@@ -4,7 +4,7 @@ import AudienceSwitcher from './AudienceSwitcher'
 import { FaExternalLinkAlt } from 'react-icons/fa'
 import { APP_URL, OWNER_CONTACT_URL } from '../lib/constants'
 import { useAudience } from '../hooks/useAudience'
-import { event } from '../lib/gtag'
+import { trackCta } from '../lib/gtag'
 
 const playerNavLinks = [
   { href: '#canchas', label: 'Canchas' },
@@ -21,6 +21,7 @@ const ownerNavLinks = [
   { href: '#membresias-duenos', label: 'Membresías' },
   { href: '#socios-destacados', label: 'Socios' },
   { href: '#demo-duenos', label: 'Demo' },
+  { href: '#faq-duenos', label: 'FAQ' },
   { href: '#contacto-duenos', label: 'Contacto' },
 ]
 
@@ -34,13 +35,11 @@ const Nav: React.FC = () => {
   const ctaExternal = !isOwner
 
   const handleCtaClick = () => {
-    if (isOwner) {
-      event({ action: 'owner_cta_click', category: 'conversion', label: 'nav_cta' })
-    }
+    trackCta(isOwner ? 'owner' : 'player', 'nav_cta')
   }
 
   return (
-    <nav className="sticky top-0 z-50 bg-refut-black/95 backdrop-blur border-b border-dark-border">
+    <nav className="sticky top-0 z-50 bg-refut-black/95 backdrop-blur border-b border-dark-border" aria-label="Principal">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16 gap-2 sm:gap-3">
           <Logo variant="white" size="md" href="/" />

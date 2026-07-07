@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { FaExternalLinkAlt } from 'react-icons/fa'
 import { APP_URL, OWNER_CONTACT_URL } from '../lib/constants'
 import { useAudience } from '../hooks/useAudience'
-import { event } from '../lib/gtag'
+import { trackCta } from '../lib/gtag'
 
 const PLAYER_HERO_ID = 'hero-section'
 const OWNER_HERO_ID = 'hero-duenos'
@@ -40,11 +40,7 @@ const StickyCTA: React.FC = () => {
         <a
           href={href}
           {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-          onClick={() => {
-            if (isOwner) {
-              event({ action: 'owner_cta_click', category: 'conversion', label: 'sticky_cta' })
-            }
-          }}
+          onClick={() => trackCta(isOwner ? 'owner' : 'player', 'sticky_cta')}
           className="inline-flex items-center gap-2 bg-refut-green text-white px-6 py-3 rounded-xl font-semibold text-sm hover:bg-accent-greenDark transition-colors focus:outline-none focus:ring-2 focus:ring-refut-green focus:ring-offset-2 focus:ring-offset-refut-black active:scale-[0.98]"
         >
           {label}

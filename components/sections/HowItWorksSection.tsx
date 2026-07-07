@@ -9,9 +9,9 @@ const steps = [
   },
   {
     number: '02',
-    title: 'Reserva o arma tu partido',
+    title: 'Publica tu partido o explora canchas',
     description:
-      'Aparta horario desde la app o publica una reta. Los jugadores se apuntan sin grupos eternos de WhatsApp.',
+      'Publica una reta y deja que los jugadores se apunten sin grupos eternos de WhatsApp. Las reservas de cancha en la app están en marcha.',
   },
   {
     number: '03',

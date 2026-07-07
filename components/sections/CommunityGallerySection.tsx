@@ -1,16 +1,27 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import { FaTimes } from 'react-icons/fa'
 import { communityMoments } from '../../lib/landingContent'
 
 const CommunityGallerySection: React.FC = () => {
   const [activeId, setActiveId] = useState<string | null>(null)
+  const closeButtonRef = useRef<HTMLButtonElement>(null)
+  const triggerRef = useRef<HTMLButtonElement | null>(null)
   const active = communityMoments.find((m) => m.id === activeId)
 
-  const close = useCallback(() => setActiveId(null), [])
+  const close = useCallback(() => {
+    setActiveId(null)
+    triggerRef.current?.focus()
+  }, [])
+
+  const open = (id: string, button: HTMLButtonElement) => {
+    triggerRef.current = button
+    setActiveId(id)
+  }
 
   useEffect(() => {
     if (!activeId) return
+    closeButtonRef.current?.focus()
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') close()
     }
@@ -40,7 +51,8 @@ const CommunityGallerySection: React.FC = () => {
             <button
               key={moment.id}
               type="button"
-              onClick={() => setActiveId(moment.id)}
+              onClick={(e) => open(moment.id, e.currentTarget)}
+              aria-label={`Ampliar: ${moment.alt}`}
               className="group relative aspect-[4/3] rounded-xl overflow-hidden border border-dark-border focus:outline-none focus:ring-2 focus:ring-refut-green focus:ring-offset-2 focus:ring-offset-refut-black"
             >
               <Image
@@ -69,12 +81,13 @@ const CommunityGallerySection: React.FC = () => {
           onClick={close}
         >
           <button
+            ref={closeButtonRef}
             type="button"
             onClick={close}
             className="absolute top-4 right-4 p-2 text-white/80 hover:text-white rounded-full focus:outline-none focus:ring-2 focus:ring-refut-green"
             aria-label="Cerrar"
           >
-            <FaTimes className="w-6 h-6" />
+            <FaTimes className="w-6 h-6" aria-hidden />
           </button>
           <div
             className="relative w-full max-w-4xl aspect-[4/3] rounded-2xl overflow-hidden"

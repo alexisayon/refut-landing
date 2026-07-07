@@ -1,8 +1,11 @@
 import Script from 'next/script'
 import { GA_MEASUREMENT_ID } from '../lib/constants'
+import { useCookieConsent } from '../contexts/CookieConsentContext'
 
 const GoogleAnalytics = () => {
-  if (!GA_MEASUREMENT_ID) {
+  const { hasAnalyticsConsent } = useCookieConsent()
+
+  if (!GA_MEASUREMENT_ID || !hasAnalyticsConsent) {
     return null
   }
 

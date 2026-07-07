@@ -160,3 +160,24 @@
   background-color: rgba(239, 68, 68, 0.1) !important;
   animation: shake 0.5s ease-in-out;
 }
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .animate-fadeIn,
+  .animate-slideIn,
+  .animate-bounce,
+  .animate-pulse,
+  .animate-shake,
+  .field-success,
+  .field-error {
+    animation: none !important;
+  }
+
+  .hover-lift:hover,
+  .hover-scale:hover {
+    transform: none;
+  }
+}

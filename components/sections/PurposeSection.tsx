@@ -1,6 +1,7 @@
 import React from 'react'
 import { FaExternalLinkAlt } from 'react-icons/fa'
 import { APP_URL } from '../../lib/constants'
+import { trackCta } from '../../lib/gtag'
 import OwnerAudienceLink from '../OwnerAudienceLink'
 
 const PurposeSection: React.FC = () => {
@@ -25,7 +26,7 @@ const PurposeSection: React.FC = () => {
           </li>
           <li className="flex gap-3">
             <span className="text-refut-green shrink-0">·</span>
-            <span><strong className="text-white">Si eres dueño de cancha:</strong> muestra horarios libres y recibe reservas.</span>
+            <span><strong className="text-white">Si eres dueño de cancha:</strong> muestra horarios y gestiona operación (reservas en app en marcha).</span>
           </li>
         </ul>
         <div className="mt-12 flex flex-col sm:flex-row gap-4 justify-center items-center">
@@ -33,6 +34,7 @@ const PurposeSection: React.FC = () => {
             href={APP_URL}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => trackCta('player', 'purpose_section')}
             className="inline-flex items-center gap-2 bg-refut-green text-white px-8 py-3 rounded-xl font-semibold hover:bg-accent-greenDark transition-colors focus:outline-none focus:ring-2 focus:ring-refut-green focus:ring-offset-2 focus:ring-offset-dark-surface"
           >
             Quiero jugar

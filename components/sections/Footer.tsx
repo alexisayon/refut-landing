@@ -5,6 +5,7 @@ import Logo from '../Logo'
 import OwnerAudienceLink from '../OwnerAudienceLink'
 import { APP_URL, OWNER_CONTACT_URL, OWNER_PANEL_URL } from '../../lib/constants'
 import { useAudience } from '../../hooks/useAudience'
+import { trackCta } from '../../lib/gtag'
 
 const playerSections = [
   { href: '#canchas', label: 'Canchas' },
@@ -21,6 +22,7 @@ const ownerSections = [
   { href: '#membresias-duenos', label: 'Membresías' },
   { href: '#socios-destacados', label: 'Socios' },
   { href: '#demo-duenos', label: 'Demo' },
+  { href: '#faq-duenos', label: 'FAQ' },
   { href: '#contacto-duenos', label: 'Contacto' },
 ]
 
@@ -40,7 +42,7 @@ const Footer: React.FC = () => {
               La plataforma del fútbol amateur en México. Canchas, partidos, equipos y comunidad.
             </p>
             <div className="flex gap-4">
-              <a href="https://wa.me/5213310475942" target="_blank" rel="noopener noreferrer" className="text-white/60 hover:text-refut-green transition-colors" aria-label="WhatsApp">
+              <a href="https://wa.me/5213310475942" target="_blank" rel="noopener noreferrer" onClick={() => trackCta('contact', 'footer_whatsapp')} className="text-white/60 hover:text-refut-green transition-colors" aria-label="WhatsApp">
                 <FaWhatsapp className="w-6 h-6" />
               </a>
               <a href="https://instagram.com/refut_mx" target="_blank" rel="noopener noreferrer" className="text-white/60 hover:text-refut-green transition-colors" aria-label="Instagram">
@@ -61,7 +63,7 @@ const Footer: React.FC = () => {
             <h4 className="text-lg font-semibold text-white mb-4">Enlaces</h4>
             <ul className="space-y-2">
               <li>
-                <a href={APP_URL} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-white/70 hover:text-refut-green transition-colors focus:outline-none focus:ring-2 focus:ring-refut-green focus:ring-offset-2 focus:ring-offset-refut-black rounded">
+                <a href={APP_URL} target="_blank" rel="noopener noreferrer" onClick={() => trackCta('app', 'footer_app')} className="inline-flex items-center gap-1.5 text-white/70 hover:text-refut-green transition-colors focus:outline-none focus:ring-2 focus:ring-refut-green focus:ring-offset-2 focus:ring-offset-refut-black rounded">
                   Entrar a la app
                   <FaExternalLinkAlt className="w-3 h-3 opacity-70" aria-hidden />
                 </a>

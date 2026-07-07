@@ -9,6 +9,7 @@ import {
   FaExternalLinkAlt,
 } from 'react-icons/fa'
 import { APP_URL } from '../../lib/constants'
+import { trackCta } from '../../lib/gtag'
 
 const features = [
   {
@@ -37,7 +38,7 @@ const features = [
     title: 'Que no se te pase un partido',
     lead: 'Alertas de recordatorio, cambios de horario y cancelaciones.',
     detail: 'Notificaciones para organizadores y jugadores.',
-    status: 'Disponible' as const,
+    status: 'En desarrollo' as const,
   },
   {
     icon: <FaStar className="w-8 h-8 text-refut-green" />,
@@ -96,6 +97,7 @@ const FeaturesSection: React.FC = () => {
             href={APP_URL}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => trackCta('app', 'features_section')}
             className="inline-flex items-center gap-2 bg-refut-green text-white px-10 py-4 rounded-xl text-lg font-semibold hover:bg-accent-greenDark transition-colors focus:outline-none focus:ring-2 focus:ring-refut-green focus:ring-offset-2 focus:ring-offset-refut-black active:scale-[0.98]"
           >
             Entrar a la app

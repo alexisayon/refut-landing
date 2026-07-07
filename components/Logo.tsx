@@ -42,7 +42,7 @@ export const Logo = ({
 
   if (href && href !== '') {
     return (
-      <Link href={href} className="inline-block">
+      <Link href={href} className="inline-block" aria-label="ReFut, inicio">
         {logoImage}
       </Link>
     )
@@ -50,14 +50,5 @@ export const Logo = ({
 
   return logoImage
 }
-
-// Componente para el favicon
-export const Favicon = () => (
-  <>
-    <link rel="icon" href="/logo/favicon.ico" sizes="any" />
-    <link rel="icon" href="/logo/favicon.png" type="image/png" />
-    <link rel="apple-touch-icon" href="/logo/apple-touch-icon.png" />
-  </>
-)
 
 export default Logo

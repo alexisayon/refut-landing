@@ -1,6 +1,7 @@
 import React from 'react'
 import { FaWhatsapp, FaInstagram, FaEnvelope } from 'react-icons/fa'
 import { useAudience } from '../../hooks/useAudience'
+import { trackCta } from '../../lib/gtag'
 import LeadCaptureForm from './LeadCaptureForm'
 
 const ContactSection: React.FC = () => {
@@ -27,14 +28,16 @@ const ContactSection: React.FC = () => {
 
         <LeadCaptureForm />
 
-        <p className="text-white/40 text-sm mt-10 mb-6">O contáctanos directo</p>
+        <p className="text-white/60 text-sm mt-10 mb-6">O contáctanos directo</p>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
           <a
             href={whatsappMessage}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => trackCta('contact', 'contact_whatsapp')}
             className="flex flex-col items-center p-6 bg-dark-surface border border-dark-border rounded-xl hover:border-refut-green/50 transition-colors focus:outline-none focus:ring-2 focus:ring-refut-green focus:ring-offset-2 focus:ring-offset-refut-black"
+            aria-label="Contactar por WhatsApp"
           >
             <FaWhatsapp className="w-10 h-10 text-refut-green mb-3" />
             <span className="font-medium text-white">WhatsApp</span>
@@ -42,7 +45,9 @@ const ContactSection: React.FC = () => {
           </a>
           <a
             href={mailto}
+            onClick={() => trackCta('contact', 'contact_email')}
             className="flex flex-col items-center p-6 bg-dark-surface border border-dark-border rounded-xl hover:border-refut-green/50 transition-colors focus:outline-none focus:ring-2 focus:ring-refut-green focus:ring-offset-2 focus:ring-offset-refut-black"
+            aria-label="Contactar por correo electrónico"
           >
             <FaEnvelope className="w-10 h-10 text-refut-green mb-3" />
             <span className="font-medium text-white">Email</span>
@@ -52,7 +57,9 @@ const ContactSection: React.FC = () => {
             href="https://instagram.com/refut_mx"
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => trackCta('contact', 'contact_instagram')}
             className="flex flex-col items-center p-6 bg-dark-surface border border-dark-border rounded-xl hover:border-refut-green/50 transition-colors focus:outline-none focus:ring-2 focus:ring-refut-green focus:ring-offset-2 focus:ring-offset-refut-black"
+            aria-label="Contactar por Instagram"
           >
             <FaInstagram className="w-10 h-10 text-refut-green mb-3" />
             <span className="font-medium text-white">Instagram</span>

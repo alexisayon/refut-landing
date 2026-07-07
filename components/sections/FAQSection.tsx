@@ -1,37 +1,7 @@
 import React, { useState } from 'react'
 import Link from 'next/link'
 import { FaChevronDown } from 'react-icons/fa'
-
-const faqs = [
-  {
-    question: '¿Qué es ReFut?',
-    answer: 'ReFut es una plataforma web para encontrar canchas de fútbol y organizar partidos amateur en la Zona Metropolitana de Guadalajara. Funciona en navegador, sin instalar app, y está pensada para jugadores, organizadores y dueños de canchas.',
-  },
-  {
-    question: '¿Dónde está disponible?',
-    answer: 'ReFut está disponible en la Zona Metropolitana de Guadalajara (ZMG), incluyendo Guadalajara, Zapopan, Tlaquepaque, Tonalá y municipios cercanos. Pronto expandiremos a más ciudades.',
-  },
-  {
-    question: '¿Dónde puedo encontrar canchas de fútbol rápido en Guadalajara?',
-    answer: 'Con ReFut puedes buscar canchas de fútbol rápido en Guadalajara usando el mapa interactivo. Filtra por zona, precio y horario para encontrar la mejor cancha cerca de ti. Disponible en colonias como Chapalita, Oblatos, Atemajac y más.',
-  },
-  {
-    question: '¿Cómo rento una cancha en Zapopan?',
-    answer: 'En ReFut puedes ver canchas disponibles en Zapopan, revisar horarios libres y hacer reservas directamente desde la plataforma. Busca por ubicación, tipo de cancha (fútbol rápido, fútbol 7, fútbol 11) y precio. Todo el proceso es gratuito.',
-  },
-  {
-    question: '¿ReFut funciona en Tlaquepaque y Tonalá?',
-    answer: 'Sí, ReFut cubre toda la Zona Metropolitana de Guadalajara, incluyendo Tlaquepaque y Tonalá. Puedes buscar canchas, crear partidos y organizar equipos en estos municipios.',
-  },
-  {
-    question: '¿Cómo me registro?',
-    answer: 'Entra desde el navegador, crea cuenta con email o redes sociales y empieza a buscar canchas o partidos cerca de ti. No necesitas instalar ninguna aplicación.',
-  },
-  {
-    question: '¿Es gratis?',
-    answer: 'Sí. Las funciones básicas como buscar canchas, crear partidos, armar equipos y hacer reservas son completamente gratuitas. Algunas funciones premium pueden tener costo en el futuro.',
-  },
-]
+import { playerFaqs } from '../../lib/playerContent'
 
 const FAQSection: React.FC = () => {
   const [openIndex, setOpenIndex] = useState<number | null>(null)
@@ -45,7 +15,7 @@ const FAQSection: React.FC = () => {
           </h2>
         </div>
         <div className="space-y-2">
-          {faqs.map((faq, index) => (
+          {playerFaqs.map((faq, index) => (
             <div
               key={index}
               className="bg-dark-card border border-dark-border rounded-xl overflow-hidden transition-all duration-200"
@@ -60,11 +30,14 @@ const FAQSection: React.FC = () => {
               >
                 <span className="font-semibold text-white">{faq.question}</span>
                 <FaChevronDown
+                  aria-hidden
                   className={`w-5 h-5 text-white/60 shrink-0 ml-2 transition-transform duration-200 ${openIndex === index ? 'rotate-180' : ''}`}
                 />
               </button>
               <div
                 id={`faq-answer-${index}`}
+                role="region"
+                aria-labelledby={`faq-question-${index}`}
                 className={`grid transition-[grid-template-rows] duration-200 ease-out ${
                   openIndex === index ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'
                 }`}

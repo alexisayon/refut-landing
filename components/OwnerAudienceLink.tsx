@@ -1,6 +1,7 @@
 import React from 'react'
 import { FaArrowRight } from 'react-icons/fa'
 import { useAudience } from '../hooks/useAudience'
+import { trackCta } from '../lib/gtag'
 
 interface OwnerAudienceLinkProps {
   className?: string
@@ -16,6 +17,7 @@ const OwnerAudienceLink: React.FC<OwnerAudienceLinkProps> = ({
   const { setAudience } = useAudience()
 
   const handleClick = () => {
+    trackCta('audience', variant)
     setAudience('duenos')
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }

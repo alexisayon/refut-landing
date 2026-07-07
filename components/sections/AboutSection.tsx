@@ -9,7 +9,7 @@ const AboutSection: React.FC = () => {
         </h2>
         <div className="bg-dark-card border border-dark-border rounded-xl p-6">
           <p className="text-white/90 text-base leading-relaxed">
-            ReFut es una plataforma web para encontrar canchas de fútbol y organizar partidos amateur en la Zona Metropolitana de Guadalajara. Funciona en navegador, sin instalar app, y está pensada para jugadores, organizadores y dueños de canchas. Puedes buscar canchas de fútbol rápido, fútbol 7 y fútbol 11 en Guadalajara, Zapopan, Tlaquepaque y Tonalá, crear partidos, invitar jugadores y hacer reservas desde el navegador.
+            ReFut es una plataforma web para encontrar canchas de fútbol y organizar partidos amateur en la Zona Metropolitana de Guadalajara. Funciona en navegador, sin instalar app, y está pensada para jugadores, organizadores y dueños de canchas. Puedes buscar canchas de fútbol rápido, fútbol 7 y fútbol 11 en Guadalajara, Zapopan, Tlaquepaque y Tonalá, crear partidos e invitar jugadores. Las reservas en app están en marcha.
           </p>
         </div>
       </div>

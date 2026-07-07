@@ -2,6 +2,7 @@ import React from 'react'
 import Image from 'next/image'
 import { FaExternalLinkAlt } from 'react-icons/fa'
 import { APP_URL } from '../../lib/constants'
+import { trackCta } from '../../lib/gtag'
 import OwnerAudienceLink from '../OwnerAudienceLink'
 import PlatformStatsBar from '../PlatformStatsBar'
 
@@ -26,6 +27,7 @@ const HeroSection: React.FC = () => {
             href={APP_URL}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => trackCta('player', 'hero_primary')}
             className="inline-flex items-center gap-2 bg-refut-green text-white px-10 py-4 rounded-xl text-lg font-semibold hover:bg-accent-greenDark transition-colors focus:outline-none focus:ring-2 focus:ring-refut-green focus:ring-offset-2 focus:ring-offset-refut-black active:scale-[0.98]"
           >
             Quiero jugar
@@ -46,7 +48,7 @@ const HeroSection: React.FC = () => {
 
         <div className="animate-fadeIn relative w-full max-w-3xl mx-auto h-56 md:h-72">
           <Image
-            src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
+            src="/images/hero/hero-court.jpg"
             alt="Jugadores de fútbol amateur en cancha"
             fill
             className="rounded-2xl object-cover border border-dark-border"

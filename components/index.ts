@@ -33,4 +33,3 @@ export { default as LandingHead } from './LandingHead'
 
 // UI Components
 export { default as Logo } from './Logo'
-export { PrivacyNotice } from './PrivacyNotice'

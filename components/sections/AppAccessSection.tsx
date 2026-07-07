@@ -2,6 +2,7 @@ import React from 'react'
 import Link from 'next/link'
 import { FaExternalLinkAlt } from 'react-icons/fa'
 import { APP_URL } from '../../lib/constants'
+import { trackCta } from '../../lib/gtag'
 
 const AppAccessSection: React.FC = () => {
   return (
@@ -30,6 +31,7 @@ const AppAccessSection: React.FC = () => {
             href={APP_URL}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => trackCta('app', 'app_access_section')}
             className="inline-flex items-center gap-2 bg-refut-green text-white px-10 py-4 rounded-xl text-lg font-semibold hover:bg-accent-greenDark transition-colors focus:outline-none focus:ring-2 focus:ring-refut-green focus:ring-offset-2 focus:ring-offset-refut-black active:scale-[0.98]"
           >
             Entrar a la app

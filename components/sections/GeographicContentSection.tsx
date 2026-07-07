@@ -1,5 +1,6 @@
 import React from 'react'
 import { APP_URL } from '../../lib/constants'
+import { trackCta } from '../../lib/gtag'
 
 const GeographicContentSection: React.FC = () => {
   return (
@@ -25,7 +26,7 @@ const GeographicContentSection: React.FC = () => {
               Rentar cancha en Zapopan, Tlaquepaque y Tonalá
             </h3>
             <p className="text-white/80 text-sm leading-relaxed mb-4">
-              ReFut cubre toda la Zona Metropolitana de Guadalajara. Busca y reserva canchas en Zapopan, Tlaquepaque, Tonalá y municipios cercanos.
+              ReFut cubre toda la Zona Metropolitana de Guadalajara. Busca canchas en Zapopan, Tlaquepaque, Tonalá y municipios cercanos; las reservas en app están en marcha.
             </p>
             <p className="text-white/70 text-sm">
               Canchas de fútbol 7, fútbol rápido y fútbol 11 disponibles.
@@ -39,7 +40,7 @@ const GeographicContentSection: React.FC = () => {
               Cómo encontrar la mejor cancha para tu equipo en la ZMG
             </h3>
             <p className="text-white/80 text-sm leading-relaxed">
-              Usa el mapa interactivo de ReFut para buscar canchas de fútbol en Guadalajara y la ZMG. Filtra por ubicación, precio, horarios disponibles y tipo de cancha (fútbol rápido, fútbol 7, fútbol 11). Revisa reseñas de otros jugadores y reserva directamente desde la app.
+              Usa el mapa interactivo de ReFut para buscar canchas de fútbol en Guadalajara y la ZMG. Filtra por ubicación, precio, horarios de referencia y tipo de cancha (fútbol rápido, fútbol 7, fútbol 11). Las reseñas y reservas directas en app están en marcha.
             </p>
           </div>
 
@@ -58,7 +59,8 @@ const GeographicContentSection: React.FC = () => {
             href={APP_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center text-refut-green hover:text-accent-greenLight font-medium"
+            onClick={() => trackCta('app', 'geographic_section')}
+            className="inline-flex items-center text-refut-green hover:text-accent-greenLight font-medium focus:outline-none focus:ring-2 focus:ring-refut-green focus:ring-offset-2 focus:ring-offset-dark-surface rounded"
           >
             Ver canchas en Guadalajara →
           </a>

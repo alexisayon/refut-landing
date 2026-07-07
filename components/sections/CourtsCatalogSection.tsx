@@ -17,6 +17,23 @@ const CourtsCatalogSection: React.FC = () => {
     event({ action: 'court_catalog_click', category: 'conversion', label: locationId })
   }
 
+  const handleZoneKeyDown = (e: React.KeyboardEvent, index: number) => {
+    const lastIndex = courtZones.length - 1
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+      e.preventDefault()
+      setZone(courtZones[index === lastIndex ? 0 : index + 1])
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault()
+      setZone(courtZones[index === 0 ? lastIndex : index - 1])
+    } else if (e.key === 'Home') {
+      e.preventDefault()
+      setZone(courtZones[0])
+    } else if (e.key === 'End') {
+      e.preventDefault()
+      setZone(courtZones[lastIndex])
+    }
+  }
+
   return (
     <section id="canchas" className="py-20 px-4 sm:px-6 lg:px-8 bg-dark-surface">
       <div className="max-w-7xl mx-auto">
@@ -26,19 +43,19 @@ const CourtsCatalogSection: React.FC = () => {
           </p>
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Encuentra tu cancha</h2>
           <p className="text-lg text-white/70 max-w-2xl mx-auto">
-            Canchas de socios ReFut en Guadalajara y zona metropolitana. Filtra por zona y reserva
-            desde la app.
+            Canchas de socios ReFut en Guadalajara y zona metropolitana. Filtra por zona y explora disponibilidad en la app.
           </p>
         </div>
 
         <div className="flex flex-wrap justify-center gap-2 mb-10" role="tablist" aria-label="Filtrar por zona">
-          {courtZones.map((z) => (
+          {courtZones.map((z, index) => (
             <button
               key={z}
               type="button"
               role="tab"
               aria-selected={zone === z}
               onClick={() => setZone(z)}
+              onKeyDown={(e) => handleZoneKeyDown(e, index)}
               className={`px-4 py-2 rounded-full text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-refut-green ${
                 zone === z
                   ? 'bg-refut-green text-white'
@@ -126,7 +143,7 @@ const CourtsCatalogSection: React.FC = () => {
           </p>
         )}
 
-        <p className="text-center text-white/40 text-xs mt-8 max-w-xl mx-auto">
+        <p className="text-center text-white/60 text-xs mt-8 max-w-xl mx-auto">
           {COURTS_CATALOG_DISCLAIMER}
         </p>
       </div>

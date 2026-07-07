@@ -10,7 +10,6 @@
   },
   "dependencies": {
     "@vercel/analytics": "^1.5.0",
-    "client-only": "^0.0.1",
     "firebase": "^12.15.0",
     "firebase-admin": "^12.7.0",
     "next": "14.0.4",

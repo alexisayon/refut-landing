@@ -4,7 +4,6 @@ export { APP_URL, SITE_URL }
 
 export const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || ''
 
-export const OWNER_SIGNUP_URL = `${APP_URL}/partner/nuevo`
 export const OWNER_PANEL_URL = `${APP_URL}/owner`
 export const OWNER_CONTACT_URL = '#contacto-duenos'
 export const OWNER_WHATSAPP_URL =

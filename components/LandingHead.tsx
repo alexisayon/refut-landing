@@ -4,6 +4,8 @@ import StructuredData from './StructuredData'
 import { useAudience } from '../hooks/useAudience'
 import { IS_STAGING, SITE_URL } from '../lib/env'
 
+const OG_IMAGE = `${SITE_URL}/og/refut-og.png`
+
 const playerMeta = {
   title: 'ReFut – Canchas de fútbol en la ZMG, organiza partidos y torneos amateur en Guadalajara',
   description:
@@ -39,11 +41,13 @@ const LandingHead: React.FC = () => {
       <meta property="og:title" content={meta.title} />
       <meta property="og:description" content={meta.description} />
       <meta property="og:type" content="website" />
-      <meta property="og:image" content={`${SITE_URL}/logo/logorefut2.svg`} />
+      <meta property="og:image" content={OG_IMAGE} />
+      <meta property="og:image:width" content="1376" />
+      <meta property="og:image:height" content="768" />
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={meta.title} />
       <meta name="twitter:description" content={meta.description} />
-      <meta name="twitter:image" content={`${SITE_URL}/logo/logorefut2.svg`} />
+      <meta name="twitter:image" content={OG_IMAGE} />
       <StructuredData audience={audience} />
     </Head>
   )
