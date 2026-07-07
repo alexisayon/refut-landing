@@ -21,8 +21,8 @@ const PartnerSpotlightSection: React.FC = () => {
               className="object-cover"
               sizes="(max-width: 1024px) 100vw, 50vw"
             />
-            <span className="absolute top-4 left-4 px-3 py-1 rounded-full bg-refut-green text-white text-xs font-semibold uppercase tracking-wide">
-              Caso de red
+            <span className="absolute top-4 left-4 px-3 py-1 rounded-full bg-refut-black/80 text-white text-xs font-semibold uppercase tracking-wide">
+              Referencia de red
             </span>
           </div>
 

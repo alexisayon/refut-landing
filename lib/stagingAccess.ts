@@ -1,3 +1,4 @@
+import { createHash } from 'crypto'
 import type { NextRequest, NextResponse } from 'next/server'
 
 export const STAGING_COOKIE = 'refut_staging_access'
@@ -12,15 +13,23 @@ export function getStagingSecret(): string | undefined {
   return process.env.STAGING_ACCESS_SECRET
 }
 
+export function getStagingCookieValue(secret: string): string {
+  return createHash('sha256').update(`refut-staging:${secret}`).digest('hex')
+}
+
 export function isStagingPublicPath(pathname: string): boolean {
   return STAGING_PUBLIC_PATHS.some((path) => pathname === path || pathname.startsWith(`${path}/`))
+}
+
+export function isStagingConfigured(): boolean {
+  return !isStagingDeploy() || Boolean(getStagingSecret())
 }
 
 export function isStagingAuthorized(req: NextRequest): boolean {
   if (!isStagingDeploy()) return true
 
   const secret = getStagingSecret()
-  if (!secret) return true
+  if (!secret) return false
 
   const vercelBypass = req.headers.get('x-vercel-protection-bypass')
   const automationSecret = process.env.VERCEL_AUTOMATION_BYPASS_SECRET
@@ -28,7 +37,8 @@ export function isStagingAuthorized(req: NextRequest): boolean {
     return true
   }
 
-  if (req.cookies.get(STAGING_COOKIE)?.value === secret) return true
+  const expectedCookie = getStagingCookieValue(secret)
+  if (req.cookies.get(STAGING_COOKIE)?.value === expectedCookie) return true
   if (req.nextUrl.searchParams.get('access') === secret) return true
 
   return false
@@ -39,7 +49,7 @@ export function applyStagingAccessCookie(req: NextRequest, res: NextResponse): N
   if (!secret) return res
   if (req.nextUrl.searchParams.get('access') !== secret) return res
 
-  res.cookies.set(STAGING_COOKIE, secret, {
+  res.cookies.set(STAGING_COOKIE, getStagingCookieValue(secret), {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',

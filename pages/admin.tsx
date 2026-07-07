@@ -1,7 +1,22 @@
 import { useState, useEffect } from 'react'
-import { BetaService, BetaRegistration } from '../lib/betaService'
-import { Timestamp } from 'firebase/firestore'
+import { useRouter } from 'next/router'
 import { useAdminAuth } from '../hooks/useAdminAuth'
+
+interface AdminRegistration {
+  id?: string
+  nombre: string
+  email: string
+  ubicacion: string
+  nivelJuego: string
+  problemasPrincipales: string[]
+  otrasProblematicas: string
+  mayorReto: string
+  interesEarlyAccess: boolean
+  selectedProblems?: string[]
+  additionalComment?: string
+  timestamp: number
+  source: string
+}
 
 interface AdminStats {
   totalUsers: number
@@ -11,10 +26,11 @@ interface AdminStats {
   earlyAccessInterest: number
   recentRegistrations: number
   mayorRetoStats: Record<string, number>
-  allRegistrations: BetaRegistration[]
+  allRegistrations: AdminRegistration[]
 }
 
 export default function Admin() {
+  const router = useRouter()
   const { isAuthenticated, isLoading: authLoading, logout } = useAdminAuth()
   const [stats, setStats] = useState<AdminStats>({
     totalUsers: 0,
@@ -30,6 +46,12 @@ export default function Admin() {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
+    if (!authLoading && !isAuthenticated) {
+      router.push('/admin-login')
+    }
+  }, [authLoading, isAuthenticated, router])
+
+  useEffect(() => {
     if (isAuthenticated) {
       loadData()
     }
@@ -40,43 +62,25 @@ export default function Admin() {
       setLoading(true)
       setError(null)
 
-      console.log('🔄 Cargando datos del admin...')
+      const res = await fetch('/api/admin/stats')
+      const data = await res.json()
 
-      // Cargar estadísticas detalladas
-      const detailedStats = await BetaService.getDetailedStats()
-      console.log('📊 Estadísticas cargadas:', detailedStats)
-      
-      // Cargar todos los registros (con datos personales)
-      const allRegistrations = await BetaService.getAllRegistrations()
-      console.log('👥 Registros cargados:', allRegistrations.length)
-
-      if (allRegistrations.length === 0) {
-        console.warn('⚠️ No se encontraron registros. Verifica:')
-        console.warn('  1. Que haya usuarios registrados en Firebase')
-        console.warn('  2. Que las reglas de Firestore permitan lectura')
-        console.warn('  3. Que la colección se llame "beta_registrations"')
+      if (!res.ok) {
+        setError(data.error || 'Error cargando datos')
+        return
       }
 
-      setStats({
-        ...detailedStats,
-        allRegistrations
-      })
+      setStats(data as AdminStats)
     } catch (err) {
-      console.error('❌ Error cargando datos:', err)
-      if (err instanceof Error) {
-        console.error('Error message:', err.message)
-        console.error('Error stack:', err.stack)
-        setError(`Error cargando datos: ${err.message}`)
-      } else {
-        setError('Error cargando datos de Firebase')
-      }
+      console.error('Error cargando datos:', err)
+      setError('Error cargando datos del servidor')
     } finally {
       setLoading(false)
     }
   }
 
-  const formatTimestamp = (timestamp: Timestamp) => {
-    return new Date(timestamp.toMillis()).toLocaleString('es-MX')
+  const formatTimestamp = (timestamp: number) => {
+    return new Date(timestamp).toLocaleString('es-MX')
   }
 
   const exportData = () => {
@@ -103,7 +107,7 @@ export default function Admin() {
         interesEarlyAccess: reg.interesEarlyAccess,
         selectedProblems: reg.selectedProblems,
         additionalComment: reg.additionalComment,
-        timestamp: reg.timestamp.toMillis(),
+        timestamp: reg.timestamp,
         source: reg.source
       }))
     }

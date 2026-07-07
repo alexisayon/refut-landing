@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { STAGING_COOKIE, getStagingSecret, isStagingDeploy } from '../../lib/stagingAccess'
+import { STAGING_COOKIE, getStagingCookieValue, getStagingSecret, isStagingDeploy } from '../../lib/stagingAccess'
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   if (!isStagingDeploy()) {
@@ -25,7 +25,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 
   res.setHeader(
     'Set-Cookie',
-    `${STAGING_COOKIE}=${secret}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=${60 * 60 * 24 * 14}`
+    `${STAGING_COOKIE}=${getStagingCookieValue(secret)}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=${60 * 60 * 24 * 14}`
   )
   return res.status(200).json({ ok: true, redirectTo: nextPath })
 }

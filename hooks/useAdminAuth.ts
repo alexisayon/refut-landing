@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/router'
 
 export const useAdminAuth = () => {
@@ -6,43 +6,28 @@ export const useAdminAuth = () => {
   const [isLoading, setIsLoading] = useState(true)
   const router = useRouter()
 
-  useEffect(() => {
-    checkAuth()
-  }, [])
-
-  const checkAuth = () => {
+  const checkAuth = useCallback(async () => {
     try {
-      const isAuth = localStorage.getItem('refut_admin_authenticated') === 'true'
-      const timestamp = localStorage.getItem('refut_admin_timestamp')
-      
-      if (isAuth && timestamp) {
-        // Verificar que la sesión no haya expirado (24 horas)
-        const sessionTime = parseInt(timestamp)
-        const now = Date.now()
-        const twentyFourHours = 24 * 60 * 60 * 1000
-        
-        if (now - sessionTime < twentyFourHours) {
-          setIsAuthenticated(true)
-        } else {
-          // Sesión expirada
-          localStorage.removeItem('refut_admin_authenticated')
-          localStorage.removeItem('refut_admin_timestamp')
-          setIsAuthenticated(false)
-        }
-      } else {
+      const res = await fetch('/api/admin/session')
+      if (!res.ok) {
         setIsAuthenticated(false)
+        return
       }
-    } catch (error) {
-      console.error('Error checking auth:', error)
+      const data = (await res.json()) as { authenticated?: boolean }
+      setIsAuthenticated(Boolean(data.authenticated))
+    } catch {
       setIsAuthenticated(false)
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [])
 
-  const logout = () => {
-    localStorage.removeItem('refut_admin_authenticated')
-    localStorage.removeItem('refut_admin_timestamp')
+  useEffect(() => {
+    checkAuth()
+  }, [checkAuth])
+
+  const logout = async () => {
+    await fetch('/api/admin/session', { method: 'DELETE' })
     setIsAuthenticated(false)
     router.push('/admin-login')
   }
@@ -57,6 +42,6 @@ export const useAdminAuth = () => {
     isAuthenticated,
     isLoading,
     logout,
-    requireAuth
+    requireAuth,
   }
 }

@@ -40,11 +40,15 @@ export interface PartnerSpotlight {
 }
 
 export const platformStats: PlatformStat[] = [
-  { id: 'socios', value: '10+', label: 'Socios en la red' },
-  { id: 'canchas', value: '25+', label: 'Canchas conectadas' },
-  { id: 'torneos', value: '8+', label: 'Torneos activos' },
-  { id: 'jugadores', value: '500+', label: 'Jugadores en la ZMG' },
+  { id: 'socios', value: '10+', label: 'Socios en la red (objetivo)' },
+  { id: 'canchas', value: '25+', label: 'Canchas conectadas (objetivo)' },
+  { id: 'torneos', value: '8+', label: 'Torneos activos (objetivo)' },
+  { id: 'jugadores', value: '500+', label: 'Jugadores en la ZMG (objetivo)' },
 ]
+
+/** Catálogo ilustrativo hasta integrar socios reales en la app. */
+export const COURTS_CATALOG_DISCLAIMER =
+  'Ejemplos representativos de la red ReFut. Disponibilidad y precios reales en la app.'
 
 export const courtZones = ['Todas', 'Guadalajara', 'Zapopan', 'Tlaquepaque', 'Tonalá'] as const
 
@@ -53,7 +57,7 @@ export type CourtZone = (typeof courtZones)[number]
 export const featuredLocations: FeaturedLocation[] = [
   {
     id: 'zapopan-norte',
-    name: 'Complejo Deportivo Zapopan Norte',
+    name: 'Complejo Deportivo Zapopan Norte (ejemplo)',
     address: 'Av. Patria, Zapopan, Jal.',
     zone: 'Zapopan',
     photoUrl:
@@ -66,7 +70,7 @@ export const featuredLocations: FeaturedLocation[] = [
   },
   {
     id: 'centro-gdl',
-    name: 'Arena Fútbol Centro',
+    name: 'Arena Fútbol Centro (ejemplo)',
     address: 'Col. Americana, Guadalajara, Jal.',
     zone: 'Guadalajara',
     photoUrl:
@@ -80,7 +84,7 @@ export const featuredLocations: FeaturedLocation[] = [
   },
   {
     id: 'tlaquepaque-sur',
-    name: 'Canchas Tlaquepaque Sur',
+    name: 'Canchas Tlaquepaque Sur (ejemplo)',
     address: 'El Salto, Tlaquepaque, Jal.',
     zone: 'Tlaquepaque',
     photoUrl:
@@ -133,7 +137,7 @@ export const communityMoments: CommunityMoment[] = [
 
 export const partnerSpotlight: PartnerSpotlight = {
   name: 'Red de socios ReFut',
-  tagline: 'Canchas y torneos que ya operan con nosotros',
+  tagline: 'Canchas y torneos que operan con nosotros (referencia)',
   description:
     'Desde complejos con varias sedes hasta organizadores de ligas amateur, los socios ReFut centralizan reservas, competencias y visibilidad en la Zona Metropolitana de Guadalajara.',
   since: '2024',

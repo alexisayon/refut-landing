@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { FaSpinner } from 'react-icons/fa'
 import { FormValidator, AntiSpam } from '../../lib/formValidator'
 import { LeadService, type LeadContactMethod, type LeadPersona } from '../../lib/leadService'
@@ -32,6 +32,10 @@ const LeadCaptureForm: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [submittedContactMethod, setSubmittedContactMethod] = useState<LeadContactMethod>('whatsapp')
+
+  useEffect(() => {
+    setPersona(audience === 'duenos' ? 'cancha' : 'jugador')
+  }, [audience])
 
   const setField = <K extends keyof FormState>(key: K, value: FormState[K]) => {
     setForm((prev) => ({ ...prev, [key]: value }))
@@ -87,6 +91,8 @@ const LeadCaptureForm: React.FC = () => {
         category: 'conversion',
         label: persona === 'cancha' ? 'owner_lead' : 'player_lead',
       })
+
+      AntiSpam.recordSubmission()
 
       setSubmitted(true)
       const method = form.contactMethod

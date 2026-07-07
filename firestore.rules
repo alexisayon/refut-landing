@@ -2,17 +2,41 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Permitir lectura y escritura para la colección de registros beta
-    match /beta_registrations/{document} {
-      allow read, write: if true;
+    function isValidEmail(email) {
+      return email is string && email.size() > 5 && email.size() < 255;
     }
-    
-    // Permitir lectura y escritura para la colección de feedback
-    match /user_feedback/{document} {
-      allow read, write: if true;
+
+    function isValidName(name) {
+      return name is string && name.size() >= 2 && name.size() <= 80;
     }
-    
-    // Denegar acceso a otras colecciones por seguridad
+
+    // Beta early-access form: create-only, no public reads
+    match /beta_registrations/{docId} {
+      allow read, update, delete: if false;
+      allow create: if isValidName(request.resource.data.nombre)
+        && isValidEmail(request.resource.data.email)
+        && request.resource.data.ubicacion is string
+        && request.resource.data.ubicacion.size() > 0
+        && request.resource.data.nivelJuego is string;
+    }
+
+    // Anonymous feedback: create-only
+    match /user_feedback/{docId} {
+      allow read, update, delete: if false;
+      allow create: if request.resource.data.problems is list
+        && request.resource.data.userId is string;
+    }
+
+    // Contact / lead form: create-only
+    match /landing_leads/{docId} {
+      allow read, update, delete: if false;
+      allow create: if isValidName(request.resource.data.nombre)
+        && isValidEmail(request.resource.data.email)
+        && request.resource.data.persona in ['jugador', 'cancha']
+        && request.resource.data.audience in ['jugadores', 'duenos']
+        && request.resource.data.source is string;
+    }
+
     match /{document=**} {
       allow read, write: if false;
     }

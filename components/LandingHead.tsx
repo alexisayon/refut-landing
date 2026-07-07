@@ -23,6 +23,7 @@ const ownerMeta = {
 const LandingHead: React.FC = () => {
   const { audience } = useAudience()
   const meta = audience === 'duenos' ? ownerMeta : playerMeta
+  const canonical = SITE_URL
 
   return (
     <Head>
@@ -30,8 +31,11 @@ const LandingHead: React.FC = () => {
       <meta name="description" content={meta.description} />
       <meta name="keywords" content={meta.keywords} />
       <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <link rel="canonical" href={canonical} />
+      <link rel="icon" href="/logo/favicon.svg" type="image/svg+xml" />
       {IS_STAGING && <meta name="robots" content="noindex, nofollow, noarchive" />}
-      <meta property="og:url" content={SITE_URL} />
+      <meta property="og:url" content={canonical} />
+      <meta property="og:locale" content="es_MX" />
       <meta property="og:title" content={meta.title} />
       <meta property="og:description" content={meta.description} />
       <meta property="og:type" content="website" />
@@ -39,6 +43,7 @@ const LandingHead: React.FC = () => {
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={meta.title} />
       <meta name="twitter:description" content={meta.description} />
+      <meta name="twitter:image" content={`${SITE_URL}/logo/logorefut2.svg`} />
       <StructuredData audience={audience} />
     </Head>
   )

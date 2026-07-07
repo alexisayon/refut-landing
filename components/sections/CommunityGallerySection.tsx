@@ -30,7 +30,8 @@ const CommunityGallerySection: React.FC = () => {
             Momentos de la comunidad
           </h2>
           <p className="text-lg text-white/70 max-w-2xl mx-auto">
-            Retas, torneos y partidos reales de jugadores en la ZMG. Toca una foto para verla en grande.
+            Fotos ilustrativas del ecosistema ReFut. Compartiremos momentos reales de socios y torneos
+            conforme crezca la comunidad.
           </p>
         </div>
 

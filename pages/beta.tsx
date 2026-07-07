@@ -138,50 +138,33 @@ const Beta: NextPage = () => {
           selectedProblems,
           additionalComment,
         })
-      } catch {
-        // continue with localStorage fallback
-      }
-      const formDataWithTimestamp = {
-        ...sanitizedData,
-        id: `refut_early_access_${Date.now()}`,
-        source: 'landing_page',
-        selectedProblems,
-        additionalComment,
-        privacyAccepted: true,
-        termsAccepted: true,
-        userAgent: typeof window !== 'undefined' ? window.navigator.userAgent : '',
-        timestamp: new Date().toISOString(),
-      }
-      if (typeof window !== 'undefined') {
-        localStorage.setItem(
-          (formDataWithTimestamp as { id: string }).id,
-          JSON.stringify(formDataWithTimestamp)
-        )
-        const existing = JSON.parse(localStorage.getItem('refut_early_access_list') ?? '[]')
-        existing.push(formDataWithTimestamp)
-        localStorage.setItem('refut_early_access_list', JSON.stringify(existing))
         AntiSpam.recordSubmission()
-      }
-      setFormularioEnviado(true)
-      setTimeout(() => {
-        setFormularioEnviado(false)
-        setMostrarFormulario(false)
-        setFormData({
-          nombre: '',
-          email: '',
-          ubicacion: '',
-          nivelJuego: '',
-          problemasPrincipales: [],
-          otrasProblematicas: '',
-          mayorReto: '',
-          interesEarlyAccess: false,
+        setFormularioEnviado(true)
+        setTimeout(() => {
+          setFormularioEnviado(false)
+          setMostrarFormulario(false)
+          setFormData({
+            nombre: '',
+            email: '',
+            ubicacion: '',
+            nivelJuego: '',
+            problemasPrincipales: [],
+            otrasProblematicas: '',
+            mayorReto: '',
+            interesEarlyAccess: false,
+          })
+          setSelectedProblems([])
+          setAdditionalComment('')
+          setPrivacyAccepted(false)
+          setTermsAccepted(false)
+          setHoneypot('')
+        }, 3000)
+      } catch {
+        setFormErrors({
+          general:
+            'No pudimos guardar tu registro. Verifica tu conexión o escríbenos por WhatsApp.',
         })
-        setSelectedProblems([])
-        setAdditionalComment('')
-        setPrivacyAccepted(false)
-        setTermsAccepted(false)
-        setHoneypot('')
-      }, 3000)
+      }
     } catch {
       setFormErrors({ general: 'Error al enviar. Intenta nuevamente.' })
     } finally {

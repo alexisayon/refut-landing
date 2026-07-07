@@ -14,7 +14,7 @@ const StickyCTA: React.FC = () => {
   const isOwner = audience === 'duenos'
   const heroId = isOwner ? OWNER_HERO_ID : PLAYER_HERO_ID
   const href = isOwner ? OWNER_CONTACT_URL : APP_URL
-  const label = isOwner ? 'Solicitar acceso' : 'Entrar a la app'
+  const label = isOwner ? 'Solicitar acceso' : 'Quiero jugar'
   const external = !isOwner
 
   useEffect(() => {

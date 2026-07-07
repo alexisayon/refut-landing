@@ -4,20 +4,18 @@ const roadmap = [
   {
     label: 'Ya disponible',
     items: [
-      'Mapa de canchas en Guadalajara y la ZMG',
-      'Buscar y filtrar canchas por zona, precio y horario en Zapopan, Tlaquepaque, Tonalá',
+      'Mapa y búsqueda de canchas en Guadalajara y la ZMG',
       'Crear y publicar partidos de fútbol rápido, fútbol 7 y fútbol 11',
-      'Buscar jugadores cercanos en la ZMG',
-      'Armar equipos y confirmar asistencia',
-      'Reservas de cancha en colonias como Chapalita, Oblatos, Atemajac',
-      'Notificaciones de recordatorios y cambios',
-      'Gestionar equipos y llevar el rol',
+      'Buscar jugadores cercanos y armar equipos',
+      'Confirmar asistencia a partidos',
     ],
     chipStyle: 'bg-refut-green/20 text-refut-green',
   },
   {
     label: 'En marcha',
     items: [
+      'Reservas de cancha en la app',
+      'Notificaciones y recordatorios',
       'Ligas y torneos (tabla, calendario, inscripción)',
       'Marcador en vivo y estadísticas del partido',
       'Reseñas y calificaciones de canchas y árbitros',
@@ -26,7 +24,7 @@ const roadmap = [
   },
   {
     label: 'Próximamente',
-    items: ['Más ciudades'],
+    items: ['Más ciudades', 'Pagos en línea para reservas e inscripciones'],
     chipStyle: 'bg-white/10 text-white/70',
   },
 ]
@@ -40,7 +38,7 @@ const RoadmapSection: React.FC = () => {
             Nuestro plan
           </h2>
           <p className="text-base text-white/80 max-w-xl mx-auto">
-            Aquí no prometemos humo: esto es lo que ya puedes usar hoy en la ZMG.
+            Lo que ya puedes probar hoy en la ZMG y lo que estamos terminando.
           </p>
         </div>
         <div className="space-y-6">

@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react'
 import Image from 'next/image'
 import { FaClock, FaExternalLinkAlt, FaMapMarkerAlt } from 'react-icons/fa'
 import { APP_URL } from '../../lib/constants'
-import { courtZones, featuredLocations, type CourtZone } from '../../lib/landingContent'
+import { COURTS_CATALOG_DISCLAIMER, courtZones, featuredLocations, type CourtZone } from '../../lib/landingContent'
 import { event } from '../../lib/gtag'
 
 const CourtsCatalogSection: React.FC = () => {
@@ -127,7 +127,7 @@ const CourtsCatalogSection: React.FC = () => {
         )}
 
         <p className="text-center text-white/40 text-xs mt-8 max-w-xl mx-auto">
-          Catálogo representativo de la red ReFut. Disponibilidad y precios actualizados en la app.
+          {COURTS_CATALOG_DISCLAIMER}
         </p>
       </div>
     </section>
